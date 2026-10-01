@@ -76,6 +76,14 @@ button:active{transform:translateY(1px);opacity:.86}
 .card{border:1px solid var(--line);background:#101513;border-radius:15px;padding:14px;margin:9px 0;line-height:1.53}
 .card h3{font-size:16px;margin:0 0 8px}
 .small{font-size:13px;color:var(--muted)}
+.infoBtn{border:0;background:transparent;color:#c9c2b4;font:700 15px/1 system-ui;padding:2px 4px;margin-left:5px;vertical-align:middle;cursor:pointer}
+.infoBtn:active{opacity:.65}
+.evpDesc{display:none;margin:7px 0 0 0;padding:9px 10px;border-left:2px solid #675d46;background:#141815;border-radius:7px;color:#aaa99f;font-size:13px;line-height:1.45}
+.evpDesc.open{display:block}
+.evpStat{padding:2px 0 8px}
+.evpStat+.evpStat{margin-top:6px;border-top:1px solid #242b27;padding-top:12px}
+.dots{letter-spacing:.07em;font-weight:850;color:#d7cfbd}
+
 .statrow,.needrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
 .bar{height:9px;background:#252d29;border-radius:999px;overflow:hidden;margin-top:6px}
 .bar span{display:block;height:100%;border-radius:999px;background:#b6a06c}
@@ -239,6 +247,7 @@ function fresh(){
     metPigeon:false,
     evpapiyFollowing:false,
     companion:false,
+    evpapiyStats:{pizdabolstvo:3,trust:1,offense:2,greed:4},
     done:{where:false,puddle:false,why:false},
     flags:{},
     lastSaved:Date.now()
@@ -260,6 +269,7 @@ function load(){
     G=Object.assign(fresh(),x);
     G.permanentMods=Object.assign(fresh().permanentMods,x.permanentMods||{});
     G.needs=Object.assign(fresh().needs,x.needs||{});
+    G.evpapiyStats=Object.assign(fresh().evpapiyStats,x.evpapiyStats||{});
     G.done=Object.assign(fresh().done,x.done||{});
     G.flags=Object.assign({},x.flags||{});
     return true;
@@ -285,7 +295,7 @@ function overallStatus(){
   if(score<1)return ['НОРМ','Все ще дивно, але живий.','portrait_base'];
   if(score<2)return ['ПОТРІПАЛО','Вже не красень, але тримається.','portrait_worry'];
   if(score<3.5)return ['ХУЙОВЕНЬКО','Бувало і краще.','portrait_base'];
-  if(score<5.5)return ['НА СОПЛЯХ','Організм починає задавати питання.','portrait_tired'];
+  if(score<5.5)return ['НА СОПЛЯХ','Треба шось робити.','portrait_tired'];
   return ['ТОБІ ПИЗДА','Треба терміново шось міняти.','portrait_tired'];
 }
 function renderOverall(){
@@ -358,7 +368,7 @@ const nodes={
     choices:[['Далі',()=>go('poop')]]
   },
   poop:{
-    enter:()=>addState('pigeonHumiliated'),
+    enter:()=>{G.metPigeon=true;addState('pigeonHumiliated');},
     scene:()=>scene('bg','man_angry','pigeon_base',{caption:'біля хати'}),
     text:`Ви дивитесь на куртку – там свіжа біло-зелена купа.
 
@@ -678,6 +688,11 @@ function showGame(){
   start.classList.add('hidden'); game.classList.remove('hidden'); render();
 }
 
+function evpDots(level){
+  level=Math.max(0,Math.min(5,Number(level)||0));
+  return '●'.repeat(level)+'○'.repeat(5-level);
+}
+
 function renderMenu(tab='states'){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   if(tab==='states'){
@@ -711,14 +726,20 @@ function renderMenu(tab='states'){
       menuContent.innerHTML='<div class="card small">Поки тут нікого нема.</div>';
       return;
     }
+    const level=v=>G.companion?'<span class="dots">'+evpDots(v)+'</span>':'???';
     menuContent.innerHTML=
-      '<div class="card"><h3>'+(G.knowsName?'Євпапій':'Голуб')+'</h3><div class="small">До вас причепився голуб. Жирний. Нахуй він тут – незрозуміло.<br>Є мізерний шанс зробити його компаньйоном.</div></div>'+
-      '<div class="card '+(G.companion?'':'locked')+'"><h3>Характеристики компаньйона</h3>'+
-      '<div class="statrow"><span>Піздабольство</span><b>'+(G.companion?'ВИСОКЕ':'???')+'</b></div>'+
-      '<div class="statrow"><span>Довіра</span><b>'+(G.companion?Math.max(0,50+G.pigeonRelation*8)+'%':'???')+'</b></div>'+
-      '<div class="statrow"><span>Образа</span><b>'+(G.companion?Math.max(0,20-G.pigeonRelation*5)+'%':'???')+'</b></div>'+
-      '<div class="statrow"><span>Жадібність</span><b>'+(G.companion?'ПРИСУТНЯ':'???')+'</b></div>'+
-      '<div class="small" style="margin-top:8px">'+(G.companion?'':'Характеристики відкриються, коли Євпапій реально стане вашим компаньйоном. Поки він просто причепився.')+'</div></div>';
+      '<div class="card"><h3>'+(G.knowsName?'Євпапій':'Голуб')+'</h3><div class="small">До вас причепився голуб. Жирний. Нахуй він тут – незрозуміло.<br>Є мізерний шанс зробити його компаньйоном.</div></div>'+ 
+      '<div class="card '+(G.companion?'':'locked')+'"><h3>Характеристики Євпапія</h3>'+ 
+      '<div class="evpStat"><div class="statrow"><span><b>ПІЗДАБОЛЬСТВО</b> <button class="infoBtn" type="button" data-info="evp-pizd">ⓘ</button></span><b>'+level(G.evpapiyStats.pizdabolstvo)+'</b></div><div class="evpDesc" id="evp-pizd">Як часто він бреше та підйобує.</div></div>'+ 
+      '<div class="evpStat"><div class="statrow"><span><b>ДОВІРА</b> <button class="infoBtn" type="button" data-info="evp-trust">ⓘ</button></span><b>'+level(G.evpapiyStats.trust)+'</b></div><div class="evpDesc" id="evp-trust">Чим вище, тим більше шансів, шо ця жирна падла реально скаже щось корисне.</div></div>'+ 
+      '<div class="evpStat"><div class="statrow"><span><b>ОБРАЗА</b> <button class="infoBtn" type="button" data-info="evp-offense">ⓘ</button></span><b>'+level(G.evpapiyStats.offense)+'</b></div><div class="evpDesc" id="evp-offense">Євпапій памʼятає більше, ніж хотілося б.</div></div>'+ 
+      '<div class="evpStat"><div class="statrow"><span><b>ЖАДІБНІСТЬ</b> <button class="infoBtn" type="button" data-info="evp-greed">ⓘ</button></span><b>'+level(G.evpapiyStats.greed)+'</b></div><div class="evpDesc" id="evp-greed">Наскільки легко його задобрити їжею.</div></div>'+ 
+      '<div class="small" style="margin-top:12px">'+(G.companion?'':'Рівні відкриються, якщо ця жирна падла реально стане вашим компаньйоном.')+'</div></div>';
+
+    menuContent.querySelectorAll('.infoBtn').forEach(btn=>btn.addEventListener('click',()=>{
+      const el=document.getElementById(btn.dataset.info);
+      if(el)el.classList.toggle('open');
+    }));
     return;
   }
   const [n,d]=overallStatus();
