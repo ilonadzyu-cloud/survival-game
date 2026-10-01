@@ -719,13 +719,9 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg','man_suspicious',null,{npc:'galina_base',npcClass:'npcSprite',caption:'сільська хитина'}),
     text:`Ви тільки нахиляєтесь до криниці, як двері сільської хитини риплять.
 
-На порозі зʼявляється невисока літня жінка в хустці. Дивиться на вас, потім кудись убік.
+На порозі зʼявляється невисока літня жінка в хустці. Дивиться на вас, потім на Євпапія.
 
-– Оте твоє так скривилось.
-
-– Шо?
-
-– Ну, оте, жирне таке.
+– Оце з тобою?
 
 Ви дивитесь на Євпапія.
 
@@ -774,7 +770,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 – Сідай-но, – каже Галина. – Їж. Бо вид у тебе недобрий.
 
-Вона підсуває вам їжу так, ніби ви тут не хуй зна звідки взялися, а просто трохи запізнились на сніданок.`,
+Вона підсуває вам їжу так, ніби ви тут не хуй зна звідки взялися.`,
     choices:[
       ['Поїсти й напитися.',()=>{G.needs.hunger=clamp(G.needs.hunger-30);G.needs.thirst=clamp(G.needs.thirst-35);adjustRelation('Галина',1);reconcileNeeds();go('galinaClothes',15)}],
       ['Взяти тільки воду.',()=>{G.needs.thirst=clamp(G.needs.thirst-35);reconcileNeeds();go('galinaClothes',10)}],
@@ -791,13 +787,22 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 – На. Чоловіча одежина. На тебе, може, й сяде.`,
     choices:[
-      ['Взяти й подякувати.',()=>{G.flags.localClothes=true;adjustRelation('Галина',1);go('galinaChanged',10)}],
-      ['Спитати, чий одяг.',()=>{G.flags.localClothes=true;G.flags.askedClothes=true;go('galinaClothesOwner',10)}],
-      ['Сказати, шо ви й так нормально виглядаєте.',()=>{G.flags.localClothes=true;go('galinaClothesJoke',10)}]
+      ['Взяти й подякувати.',()=>{adjustRelation('Галина',1);go('galinaTakeClothes',5)}],
+      ['Спитати, чий одяг.',()=>{G.flags.askedClothes=true;go('galinaClothesOwner',5)}],
+      ['Сказати, шо ви й так нормально виглядаєте.',()=>go('galinaClothesJoke',5)]
     ]
   },
+  galinaTakeClothes:{
+    scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
+    text:`– Дякую.
+
+– Бери вже. Не мені ж його носити.
+
+Галина кладе одяг поруч.`,
+    choices:[['Переодягнутись',()=>{G.flags.localClothes=true;go('galinaChanged',5)}]]
+  },
   galinaClothesOwner:{
-    scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
+    scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`– А чий це одяг?
 
 – Був чоловічий.
@@ -806,13 +811,13 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 Галина поправляє край фартуха.
 
-– Тепер твій, коли вже вдягнув.
+– Тепер твій буде.
 
-І спокійно прибирає решту речей.`,
-    choices:[['Далі',()=>go('galinaQuiet',5)]]
+І кладе одежину поруч.`,
+    choices:[['Переодягнутись',()=>{G.flags.localClothes=true;go('galinaChanged',5)}]]
   },
   galinaClothesJoke:{
-    scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
+    scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`– Та я й так нормально виглядаю.
 
 Галина дивиться на вас.
@@ -822,11 +827,11 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 – Не гоже брехати в чужій хаті.
 
 Одяг вона все одно кладе вам у руки.`,
-    choices:[['Переодягнутись',()=>go('galinaQuiet',5)]]
+    choices:[['Переодягнутись',()=>{G.flags.localClothes=true;go('galinaChanged',5)}]]
   },
   galinaChanged:{
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`Одяг трохи чужий і сидить так собі, але тепер ви хоча б не виглядаєте так, ніби щойно випали з іншого світу.
+    text:`Одяг трохи чужий і сидить так собі, але тепер ви хоча б менше вибиваєтесь.
 
 Борода, волосся й морда після будуняри нікуди не ділись.`,
     choices:[['Далі',()=>go('galinaQuiet',5)]]
