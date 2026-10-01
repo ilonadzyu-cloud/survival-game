@@ -55,7 +55,7 @@ button:active{transform:translateY(1px);opacity:.86}
 .heroSprite{left:7%;bottom:5%;height:57%;max-width:48%}
 .pigeonSprite{right:8%;bottom:17%;height:34%;max-width:45%}
 .pigeonSmall{right:9%;bottom:28%;height:25%}
-.pigeonShoulder{right:5%;bottom:10%;height:44%;max-width:56%}
+.pigeonShoulder{left:15%;bottom:37%;height:17%;max-width:23%;z-index:3}
 .caption{position:absolute;z-index:6;left:10px;bottom:10px;background:#080c0bd9;border:1px solid #ffffff16;border-radius:999px;padding:6px 10px;font-size:11px;color:#ded7cb}
 .story{font:18px/1.6 Georgia,serif}
 .story p{margin:0 0 13px}
@@ -97,14 +97,15 @@ button:active{transform:translateY(1px);opacity:.86}
 <div id="app">
   <main id="start" class="screen">
     <div class="heroTitle">Гамняна рибалка</div>
-    <p class="sub">Текстова виживалка з комедією, крінжем і поступовим хорором.</p>
+    <p class="sub">Текстова виживалка з комедією, крінжем і хорором.</p>
 
     <div class="box"><b>Кожне ваше рішення має значення.</b><br>
-    Вибір може змінити стан героя, відкрити нову дію в діалозі, вплинути на ставлення до вас або вилізти боком значно пізніше. Не все корисне виявиться добрим, а не кожна хуйова ідея закінчиться хуйово.<br><br>
+    Вибір може змінити стан героя, вплинути на ставлення до вас або вилізти боком значно пізніше. Не все корисне виявиться добрим, а не кожна хуйова ідея закінчиться хуйово.<br><br>
+    Стани й характеристики можуть відкривати нові варіанти в діалогах і діях. Гра не завжди скаже про це прямо – будьте на чєку.<br><br>
     Будьте обережні – не все те, чим здається.</div>
 
     <div class="box"><b>Стани</b><br>
-    Стани можуть відкривати нові дії в діалогах. Деякі можна зняти. Деякі самі пройдуть. А деякі будуть з вами, поки ви не розгребете ту хуйню, яку наробили.</div>
+    Стани змінюють характеристики героя. Деякі можна зняти. Деякі самі пройдуть. А деякі будуть з вами, поки ви не розгребете ту хуйню, яку наробили.</div>
 
     <button id="newGame" class="primary">Почати</button>
     <button id="continueGame" class="secondary hidden" style="margin-top:9px">Продовжити</button>
@@ -181,6 +182,7 @@ const stateDefs={
     affects:'сприйняття дічі, реакції героя і дає секретні варіанти дій.',
     remove:'сам пройде, коли перестанете ахуєвати.',
     note:'Ми самі в шоці, але тут реально без дебафів.',
+    secret:'Цей стан може відкрити секретні варіанти дій. Будьте на чєку.',
     portrait:'portrait_ahui', severity:0
   },
   hungry:{
@@ -276,7 +278,7 @@ function overallStatus(){
   if(G.needs.fatigue>80)score+=1.2;
   if(score<1)return ['НОРМ','Все ще дивно, але живий.','portrait_base'];
   if(score<2)return ['ПОТРІПАЛО','Вже не красень, але тримається.','portrait_worry'];
-  if(score<3.5)return ['ХУЙОВЕНЬКО','Може бути краще. Значно.','portrait_base'];
+  if(score<3.5)return ['ХУЙОВЕНЬКО','Бувало і краще.','portrait_base'];
   if(score<5.5)return ['НА СОПЛЯХ','Організм починає задавати питання.','portrait_tired'];
   return ['ТОБІ ПИЗДА','Треба терміново шось міняти.','portrait_tired'];
 }
@@ -299,7 +301,7 @@ function renderStates(){
 }
 function showStateInfo(id){
   const d=stateDefs[id]; if(!d)return;
-  statePopup.innerHTML='<div class="statePopup"><img src="'+IMG[d.portrait]+'" alt=""><div><h3>'+esc(d.name)+'</h3><div class="effect">'+effectsHtml(d)+'</div><div class="effect"><b>Впливає на:</b> '+esc(d.affects)+'</div><div class="effect"><b>Як позбутись:</b> '+esc(d.remove)+'</div>'+(d.note?'<div class="effect" style="margin-top:8px"><b>Примітка:</b> '+esc(d.note)+'</div>':'')+'</div></div>';
+  statePopup.innerHTML='<div class="statePopup"><img src="'+IMG[d.portrait]+'" alt=""><div><h3>'+esc(d.name)+'</h3><div class="effect">'+effectsHtml(d)+'</div><div class="effect"><b>Як позбутись:</b> '+esc(d.remove)+'</div>'+(d.secret?'<div class="effect" style="margin-top:8px"><b>Секретні можливості:</b> '+esc(d.secret)+'</div>':'')+(d.note?'<div class="effect" style="margin-top:8px"><b>Примітка:</b> '+esc(d.note)+'</div>':'')+'</div></div>';
   stateOverlay.classList.remove('hidden');
 }
 function addState(id){
@@ -418,7 +420,7 @@ const nodes={
   },
   shoulder:{
     enter:()=>{addState('yebatorium');G.metPigeon=true;},
-    scene:()=>scene('bg','man_ahui','pigeon_shoulder',{caption:'остановочка єбаторіум',pigeonClass:'pigeonShoulder'}),
+    scene:()=>scene('bg','man_ahui','pigeon_talk',{caption:'остановочка єбаторіум',pigeonClass:'pigeonShoulder'}),
     text:`Ви зупиняєтесь і дивитесь навколо, але поруч нікого нема. На секунду здається, шо просто причулося.
 
 Голуб злітає з паркану, сідає вам на плече й каже:
@@ -673,10 +675,10 @@ function showGame(){
 function renderMenu(tab='states'){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   if(tab==='states'){
-    menuContent.innerHTML='<div class="card small">Стани можуть змінювати характеристики, відкривати нові репліки й дії. Частина наслідків у грі прихована.</div>'+
+    menuContent.innerHTML='<div class="card small">Тут зберігаються активні й уже відкриті стани героя. Нові можливості в діалогах гра не завжди показує прямо – будьте на чєку.</div>'+
       G.knownStates.map(id=>{
         const d=stateDefs[id]; if(!d)return '';
-        return '<div class="card"><h3>'+esc(d.name)+'</h3><div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>Впливає на:</b> '+esc(d.affects)+'<br><b>Як позбутись:</b> '+esc(d.remove)+'</div></div>';
+        return '<div class="card"><h3>'+esc(d.name)+'</h3><div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>Як позбутись:</b> '+esc(d.remove)+(d.secret?'<br><b>Секретні можливості:</b> '+esc(d.secret):'')+'</div></div>';
       }).join('');
     return;
   }
@@ -715,7 +717,7 @@ function renderMenu(tab='states'){
   }
   const [n,d]=overallStatus();
   menuContent.innerHTML='<div class="card"><h3>Загальний стан: '+esc(n)+'</h3><div class="small">'+esc(d)+'</div></div>'+
-    '<div class="card">Кожне рішення може змінити стан героя, діалог, ставлення персонажів або мати відкладений наслідок. Не всі наслідки гра показує одразу.</div>'+
+    '<div class="card">Кожне рішення може змінити стан героя, ставлення персонажів або мати відкладений наслідок. Стани й характеристики іноді відкривають нові варіанти в діалогах і діях. Не всі наслідки гра показує одразу.</div>'+
     '<div class="card small">Гра автоматично зберігається після кожного переходу. Кнопка «Зберегти» робить те саме вручну.</div>';
 }
 
