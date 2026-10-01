@@ -110,7 +110,7 @@ button:active{transform:translateY(1px);opacity:.86}
 .timePanel{border:1px solid var(--line);background:#101512;border-radius:14px;padding:9px 11px;margin-bottom:10px}
 .timeHead{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px}.timeHead b{font-size:13px}.timeTrack{position:relative;height:8px;border-radius:999px;background:#252d29;margin-top:8px;overflow:visible}.timeFill{height:100%;border-radius:999px;background:#777667}.timeMarker{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:18px;line-height:1;filter:drop-shadow(0 2px 2px #000)}
 .statCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.statLvl{font-size:11px;color:var(--muted);margin-top:2px}.statNum{font-weight:900;white-space:nowrap}.segments{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0 7px}.seg{height:11px;border-radius:3px;background:#252d29;border:1px solid #303a35}.seg.base{background:#c9bea1;border-color:#c9bea1}.seg.buff{background:#8ea27d;border-color:#8ea27d}.seg.debuff{background:#6b3f3b;border-color:#a55e57;opacity:.8}.statBreakdown{font-size:11px;color:var(--muted)}
-.inventoryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.invSlot{border:1px solid var(--line);border-radius:13px;background:#121714;padding:11px;min-height:105px}.invSlot.empty{display:flex;align-items:center;justify-content:center;color:#666}.invName{font-weight:850}.invDesc{font-size:12px;color:var(--muted);line-height:1.4;margin-top:5px}.invBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.miniBtn{border:1px solid var(--line);background:#191f1b;color:var(--text);border-radius:9px;padding:7px 9px;font-size:12px;min-height:0}.miniBtn.danger{color:#d6a39b}.sectionTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}.saveSlot{display:grid;gap:8px}.saveMeta{font-size:12px;color:var(--muted)}.saveBtns{display:flex;gap:7px}.saveBtns button{flex:1}.lockedMsg{padding:20px;text-align:center;color:var(--muted)}
+.inventoryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.invSlot{border:1px solid var(--line);border-radius:13px;background:#121714;padding:11px;min-height:105px}.invSlot.empty{display:flex;align-items:center;justify-content:center;color:#666}.invHead{display:flex;align-items:center;gap:9px}.invIcon{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#1b211d;display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 34px}.invName{font-weight:850}.invDesc{font-size:12px;color:var(--muted);line-height:1.4;margin-top:5px}.invBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.miniBtn{border:1px solid var(--line);background:#191f1b;color:var(--text);border-radius:9px;padding:7px 9px;font-size:12px;min-height:0}.miniBtn.danger{color:#d6a39b}.sectionTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}.saveSlot{display:grid;gap:8px}.saveMeta{font-size:12px;color:var(--muted)}.saveBtns{display:flex;gap:7px}.saveBtns button{flex:1}.lockedMsg{padding:20px;text-align:center;color:var(--muted)}
 .healthbar span{background:#9bad90}.dangerbar span{background:#b38f67}
 @media(max-width:470px){.inventoryGrid{grid-template-columns:1fr 1fr}.segments{gap:3px}.seg{height:10px}}
 
@@ -210,16 +210,16 @@ const statDefs={
 };
 
 const itemDefs={
-  vodka:{name:'Горілка',desc:'Можна випити. Навіщо – то вже інше питання.',consumable:true},
-  aspirin:{name:'Аспірин',desc:'Може трохи привести голову до тями.',consumable:true},
-  medkit:{name:'Аптечка',desc:'Для здоровʼя і травм.',consumable:true},
-  knife:{name:'Ніж',desc:'Інструмент, зброя і потенційно дуже хуйова ідея.',consumable:false},
-  salo:{name:'Сало',desc:'Можна зʼїсти.',consumable:true},
-  water:{name:'Вода',desc:'Знижує спрагу.',consumable:true},
-  garlic:{name:'Часник',desc:'Часник.',consumable:true},
-  onion:{name:'Цибуля',desc:'Цибуля як цибуля. Напевно.',consumable:true},
-  holywater:{name:'Свята вода',desc:'Вода. Свята. Нащо вона вам – побачимо.',consumable:true},
-  potion_unknown:{name:'Невідоме зілля',desc:'Ефект: ???',consumable:true}
+  vodka:{name:'Горілка',icon:'🍾',desc:'Можна випити. Навіщо – то вже інше питання.',consumable:true},
+  aspirin:{name:'Аспірин',icon:'💊',desc:'Може трохи привести голову до тями.',consumable:true},
+  medkit:{name:'Аптечка',icon:'🩹',desc:'Для здоровʼя і травм.',consumable:true},
+  knife:{name:'Ніж',icon:'🔪',desc:'Інструмент, зброя і потенційно дуже хуйова ідея.',consumable:false},
+  salo:{name:'Сало',icon:'🥓',desc:'Можна зʼїсти.',consumable:true},
+  water:{name:'Вода',icon:'💧',desc:'Знижує спрагу.',consumable:true},
+  garlic:{name:'Часник',icon:'🧄',desc:'Часник.',consumable:true},
+  onion:{name:'Цибуля',icon:'🧅',desc:'Цибуля як цибуля. Напевно.',consumable:true},
+  holywater:{name:'Свята вода',icon:'✝️',desc:'Вода. Свята. Нащо вона вам – побачимо.',consumable:true},
+  potion_unknown:{name:'Невідоме зілля',icon:'🧪',desc:'Ефект: ???',consumable:true}
 };
 
 function fresh(){
@@ -744,7 +744,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg','man_suspicious',null,{npc:'galina_base',caption:'сільська хитина'}),
     text:`– А чого його не пускаєте?
 
-Галина ще раз дивиться в бік Євпапія.
+Баба Галя ще раз дивиться в бік Євпапія.
 
 – Не люблю я голубів. Хай надворі сидить, нічого йому не станеться.
 
@@ -757,7 +757,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg','man_suspicious',null,{npc:'galina_base',caption:'сільська хитина'}),
     text:`Ви не спішите й кілька секунд просто дивитесь на неї.
 
-Галина стоїть спокійно, усміхається й терпляче чекає.
+Баба Галя стоїть спокійно, усміхається й терпляче чекає.
 
 – Ну? Заходити будеш чи при криниці житимеш?
 
@@ -768,7 +768,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`У хаті тепло. Піч потріскує, на столі вже стоять хліб, сало, цибуля й глечик води.
 
-– Сідай-но, – каже Галина. – Їж. Бо вид у тебе недобрий.
+– Сідай-но, – каже баба Галя. – Їж. Бо вид у тебе недобрий.
 
 Вона підсуває вам їжу так, ніби ви тут не хуй зна звідки взялися.`,
     choices:[
@@ -779,7 +779,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
   },
   galinaClothes:{
     scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`Галина ще раз оглядає вас з голови до ніг.
+    text:`Баба Галя ще раз оглядає вас з голови до ніг.
 
 – А одежина в тебе чудна. Не гоже так селом ходити.
 
@@ -798,7 +798,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 – Бери вже. Не мені ж його носити.
 
-Галина кладе одяг поруч.`,
+Баба Галя кладе одяг поруч.`,
     choices:[['Переодягнутись',()=>{G.flags.localClothes=true;go('galinaChanged',5)}]]
   },
   galinaClothesOwner:{
@@ -809,7 +809,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 – Я поняв. Чий?
 
-Галина поправляє край фартуха.
+Баба Галя поправляє край фартуха.
 
 – Тепер твій буде.
 
@@ -820,7 +820,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg_hut','man_tired',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`– Та я й так нормально виглядаю.
 
-Галина дивиться на вас.
+Баба Галя дивиться на вас.
 
 Довго.
 
@@ -842,13 +842,13 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 
 – А чого в селі нікого нема? – питаєте ви.
 
-Галина перестає поправляти посуд.`,
+Баба Галя перестає поправляти посуд.`,
     choices:[['Далі',()=>go(G.flags.watchGalina?'galinaGrimace':'galinaMurder',5)]]
   },
   galinaGrimace:{
     enter:()=>{if(!G.flags.galinaGrimaceSeen){G.flags.galinaGrimaceSeen=true;gainStatProgress('attention',1);}},
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_grimace',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`На мить Галина кривиться.
+    text:`На мить баба Галя кривиться.
 
 Так швидко, що якби ви до того за нею не придивлялись, то й не помітили б.
 
@@ -859,7 +859,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
   galinaMurder:{
     enter:()=>{G.flags.murderKnown=true;},
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`– Люд по хатах сидить, – каже Галина. – Ніч недобра була.
+    text:`– Люд по хатах сидить, – каже баба Галя. – Ніч недобра була.
 
 – Шо сталося?
 
@@ -882,7 +882,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`– Кого вбили?
 
-Галина зітхає.
+Баба Галя зітхає.
 
 – Семена, мельникового небожа. Молодий був. Язик мав довгий, та смерті за те не дають.
 
@@ -897,7 +897,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`– А ви шось дуже спокійно про це говорите.
 
-Галина дивиться на вас без усмішки.
+Баба Галя дивиться на вас без усмішки.
 
 – А криком мертвого піднімеш?
 
@@ -906,7 +906,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
   },
   galinaGarlic:{
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`Перед тим як ви підводитесь, Галина кладе на стіл головку часнику.
+    text:`Перед тим як ви підводитесь, баба Галя кладе на стіл головку часнику.
 
 – І се візьми.
 
@@ -1005,13 +1005,49 @@ const statFlavor={
 function statFlavorText(k,level){
   return (statFlavor[k]&&statFlavor[k][level]) || ('Рівень '+level+'. Ше є куди рости.');
 }
+
+function needFlavor(kind,v){
+  v=Number(v)||0;
+  if(kind==='health'){
+    if(v>=80)return 'Поки живі.';
+    if(v>=60)return 'Тримаєтесь.';
+    if(v>=40)return 'Вже не дуже.';
+    if(v>=20)return 'Ще трохи – і буде пизда.';
+    return 'Тобі пизда.';
+  }
+  if(kind==='hunger'){
+    if(v<20)return 'Їсти поки не горить.';
+    if(v<40)return 'Шось би перекусити.';
+    if(v<60)return 'Живіт уже нагадує про себе.';
+    if(v<80)return 'Їсти хочеться пиздець.';
+    if(v<95)return 'Сало зараз виглядає як скарб.';
+    return 'Євпапій починає виглядати їстівним.';
+  }
+  if(kind==='thirst'){
+    if(v<20)return 'Пити поки не хочеться.';
+    if(v<40)return 'Трохи сушить.';
+    if(v<60)return 'Води би.';
+    if(v<80)return 'Пити хочеться пиздець.';
+    if(v<95)return 'Калюжа вже виглядає не так погано.';
+    return 'Ви вже готові пити хуй зна шо.';
+  }
+  if(kind==='fatigue'){
+    if(v<20)return 'Поки тримаєтесь.';
+    if(v<40)return 'Трохи підзаєбались.';
+    if(v<60)return 'Очі вже просять полежати.';
+    if(v<80)return 'Вас вирубає.';
+    if(v<95)return 'Ще трохи – і заснете стоячи.';
+    return 'Ляжете де впадете.';
+  }
+  return '';
+}
 function renderInventory(){
   const slots=G.inventory.map((x,i)=>{
     if(!x)return '<div class="invSlot empty">Пусто</div>';
     const d=itemDefs[x.id]||{name:x.id,desc:''};
     const use='<button class="miniBtn" data-use="'+i+'">Використати</button>';
     const gift=(x.id==='salo'&&G.metPigeon)?'<button class="miniBtn" data-gift="'+i+'">Дати Євпапію</button>':'';
-    return '<div class="invSlot"><div class="invName">'+esc(d.name)+(x.qty>1?' ×'+x.qty:'')+'</div><div class="invDesc">'+esc(d.desc)+'</div><div class="invBtns">'+use+gift+'<button class="miniBtn danger" data-drop="'+i+'">Викинути</button></div></div>';
+    return '<div class="invSlot"><div class="invHead"><div class="invIcon">'+esc(d.icon||'•')+'</div><div class="invName">'+esc(d.name)+(x.qty>1?' ×'+x.qty:'')+'</div></div><div class="invDesc">'+esc(d.desc)+'</div><div class="invBtns">'+use+gift+'<button class="miniBtn danger" data-drop="'+i+'">Викинути</button></div></div>';
   }).join('');
   const important=G.importantItems.length?G.importantItems.map(id=>'<div class="card"><b>'+esc(itemDefs[id]?.name||id)+'</b></div>').join(''):'<div class="card small">Поки пусто. Сюжетні предмети місця не займають і викинути їх не можна.</div>';
   const pigeon=G.companion?(G.pigeonGifts.length?G.pigeonGifts.map(id=>'<div class="card"><b>'+esc(itemDefs[id]?.name||id)+'</b></div>').join(''):'<div class="card small">Поки нічого.</div>'):'';
@@ -1031,8 +1067,8 @@ function renderMenu(tab='states'){
     return;
   }
   if(tab==='needs'){
-    const rows=[['Здоровʼя',G.health,'Чим вище, тим краще.','healthbar'],['Голод',G.needs.hunger,'Росте до 100%. Після 60% починає реально заважати.','dangerbar'],['Спрага',G.needs.thirst,'Росте до 100%. Спрага лупить швидше за голод.','dangerbar'],['Втома',G.needs.fatigue,'Росте до 100%. Висока втома бʼє по Уважності й Спритності.','dangerbar']];
-    menuContent.innerHTML='<div class="card small">Здоровʼя падає, потреби ростуть. На 60% зʼявляються стани, після 80% дебафи стають сильніші, 95–100% – критично.</div>'+rows.map(r=>'<div class="card"><div class="needrow"><b>'+r[0]+'</b><b>'+Math.round(r[1])+'%</b></div><div class="bar '+r[3]+'"><span style="width:'+r[1]+'%"></span></div><div class="small" style="margin-top:7px">'+r[2]+'</div></div>').join('');return;
+    const rows=[['Здоровʼя',G.health,'health','healthbar'],['Голод',G.needs.hunger,'hunger','dangerbar'],['Спрага',G.needs.thirst,'thirst','dangerbar'],['Втома',G.needs.fatigue,'fatigue','dangerbar']];
+    menuContent.innerHTML='<div class="card small">Здоровʼя падає, потреби ростуть. На 60% зʼявляються стани, після 80% дебафи стають сильніші, 95–100% – критично.</div>'+rows.map(r=>'<div class="card"><div class="needrow"><b>'+r[0]+'</b><b>'+Math.round(r[1])+'%</b></div><div class="bar '+r[3]+'"><span style="width:'+r[1]+'%"></span></div><div class="statFlavor">'+esc(needFlavor(r[2],r[1]))+'</div></div>').join('');return;
   }
   if(tab==='inventory'){renderInventory();return;}
   if(tab==='evpapiy'){
@@ -1043,7 +1079,7 @@ function renderMenu(tab='states'){
   }
   if(tab==='relations'){
     if(!relationshipsUnlocked()){menuContent.innerHTML='<div class="card lockedMsg"><b>ПОКИ ЗАКРИТО</b><br><br>Стосунки відкриються, коли Харизма або Уважність дійде до 2 рівня.</div>';return;}
-    const entries=Object.entries(G.relationships);menuContent.innerHTML=entries.length?entries.map(([name,val])=>'<div class="card"><b>'+esc(name)+'</b><div class="small">'+esc(relationLabel(val))+'</div></div>').join(''):'<div class="card small">Ви вже можете краще читати ставлення людей, але поки нема кого аналізувати.</div>';return;
+    const entries=Object.entries(G.relationships);menuContent.innerHTML=entries.length?entries.map(([name,val])=>'<div class="card"><b>'+esc(name==='Галина'?'баба Галя':name)+'</b><div class="small">'+esc(relationLabel(val))+'</div></div>').join(''):'<div class="card small">Ви вже можете краще читати ставлення людей, але поки нема кого аналізувати.</div>';return;
   }
   if(tab==='saves'){
     menuContent.innerHTML='<div class="card small"><b>Автосейв</b> оновлюється після важливих переходів. Нижче – 3 ручні слоти.</div>'+SLOT_KEYS.map((_,i)=>{const x=slotData(i);let meta='Пусто';if(x){const t=x.time||{day:1,minute:400},ph=phaseInfo(t.minute)[1];meta='Розділ 1 · '+ph+' · День '+t.day;}return '<div class="card saveSlot"><b>Слот '+(i+1)+'</b><div class="saveMeta">'+meta+'</div><div class="saveBtns"><button class="miniBtn" data-save-slot="'+i+'">Зберегти сюди</button>'+(x?'<button class="miniBtn" data-load-slot="'+i+'">Завантажити</button>':'')+'</div></div>';}).join('');
