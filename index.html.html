@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#24362f">
+<title>Лісова виживалка</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#24362f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:none;user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;background:#91aa70}
+#hud{position:fixed;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));z-index:3;color:#fff;pointer-events:none}
+.row{display:flex;gap:7px;flex-wrap:wrap}.pill{font-size:12px;padding:7px 9px;border-radius:12px;background:rgba(20,32,28,.76);border:1px solid rgba(255,255,255,.14);text-shadow:0 1px 2px #0006}
+#message{margin-top:7px;max-width:68%;font-size:12px;line-height:1.25;padding:8px 9px;border-radius:11px;background:rgba(20,32,28,.76)}
+#craft{position:fixed;right:10px;top:142px;z-index:5;width:142px;display:flex;flex-direction:column;gap:7px}
+button{font:inherit;border:0}.craft{padding:9px 7px;border-radius:13px;background:#eee2bd;color:#24352f;font-size:11px;font-weight:750;box-shadow:0 3px 10px #0002;touch-action:manipulation}.craft:disabled{opacity:.42}
+#joy{position:fixed;left:18px;bottom:max(23px,env(safe-area-inset-bottom));z-index:5;width:132px;height:132px;border-radius:50%;background:#17231f66;border:1px solid #ffffff33;touch-action:none}
+#knob{position:absolute;left:41px;top:41px;width:50px;height:50px;border-radius:50%;background:#eee9d8cc;box-shadow:0 3px 10px #0004}
+#action{position:fixed;right:20px;bottom:max(30px,env(safe-area-inset-bottom));z-index:5;width:88px;height:88px;border-radius:50%;background:#bd6d48;color:white;font-size:16px;font-weight:850;box-shadow:0 6px 18px #0005;touch-action:manipulation}
+#badge{position:fixed;left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom));z-index:4;color:#fff9;font-size:10px;white-space:nowrap;pointer-events:none}
+#boot{position:fixed;left:50%;top:52%;transform:translate(-50%,-50%);z-index:20;background:#17231fee;color:#fff;padding:12px 16px;border-radius:13px;font-size:13px}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud"><div class="row"><div class="pill" id="lvl"></div><div class="pill" id="sea"></div><div class="pill" id="bag"></div></div><div id="message">Рухайся джойстиком. Біля ресурсу тисни «ДІЯ».</div></div>
+<div id="craft">
+<button class="craft" id="axe">Сокира<br>5🪵 + 4🪨</button>
+<button class="craft" id="pick">Кирка<br>4🪵 + 6🪨</button>
+<button class="craft" id="tent">Намет<br>12🪵 + 3🧵</button>
+<button class="craft" id="upgrade" hidden>Покращити<br>18🪵 + 12🪨</button>
+<button class="craft" id="food">Їжа<br>3🍓</button>
+</div>
+<div id="joy"><div id="knob"></div></div><button id="action">ДІЯ</button><div id="badge">прототип · щільна карта</div><div id="boot">Запускаю гру…</div>
+<script>
+(function(){
+'use strict';
+var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+var E={lvl:document.getElementById('lvl'),sea:document.getElementById('sea'),bag:document.getElementById('bag'),msg:document.getElementById('message'),joy:document.getElementById('joy'),knob:document.getElementById('knob'),action:document.getElementById('action'),axe:document.getElementById('axe'),pick:document.getElementById('pick'),tent:document.getElementById('tent'),upgrade:document.getElementById('upgrade'),food:document.getElementById('food'),boot:document.getElementById('boot')};
+var W=0,H=0,DPR=1;
+function resize(){W=window.innerWidth;H=window.innerHeight;DPR=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0)}
+window.addEventListener('resize',resize);resize();
+var seasonData=[['Весна','#91aa70','#55794c'],['Літо','#83a252','#416b3f'],['Осінь','#a98a57','#9a5e39'],['Зима','#cbd5d3','#6c8079']];
+var S={x:0,y:0,cx:0,cy:0,wood:0,stone:0,berry:0,cloth:2,xp:0,level:1,season:0,day:1,axe:false,pick:false,tent:0};
+var input={x:0,y:0};
+var objs=[];
+function spawn(t,x,y){objs.push({t:t,x:x,y:y,h:t==='b'?1:3,max:t==='b'?1:3,dead:false,timer:0})}
+function buildWorld(){objs=[];var near=[['t',-92,-35],['r',78,-58],['b',106,52],['t',-58,94],['r',-118,62],['b',-84,-112],['t',36,125],['r',5,-138],['t',142,6],['b',158,-92],['r',160,115],['t',-174,-46],['b',63,146],['r',-142,-118]];near.forEach(function(a){spawn(a[0],a[1],a[2])});for(var i=0;i<85;i++){var q=Math.random(),t=q<.48?'t':q<.78?'r':'b',x=-720+Math.random()*1440,y=-720+Math.random()*1440;if(Math.hypot(x,y)<205){i--;continue}spawn(t,x,y)}}
+buildWorld();
+function xpNeed(){return 18+(S.level-1)*11}
+function gainXP(n){S.xp+=n;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.level++;say('Рівень '+S.level+'! Відкрились нові можливості.')}}
+function say(s){E.msg.textContent=s}
+function can(c){for(var k in c)if(S[k]<c[k])return false;return true}
+function spend(c){for(var k in c)S[k]-=c[k]}
+function hud(){E.lvl.textContent='Рівень '+S.level+' · '+S.xp+'/'+xpNeed()+' XP';E.sea.textContent=seasonData[S.season][0]+' · день '+S.day;E.bag.textContent='🪵 '+S.wood+' · 🪨 '+S.stone+' · 🍓 '+S.berry+' · 🧵 '+S.cloth;E.axe.disabled=S.axe||!can({wood:5,stone:4});E.pick.disabled=S.pick||!can({wood:4,stone:6});E.tent.disabled=!!S.tent||!can({wood:12,cloth:3});E.upgrade.hidden=!S.tent;E.upgrade.disabled=S.tent>=2||!can({wood:18,stone:12});E.food.disabled=!can({berry:3})}
+function nearest(){var b=null,d=62;for(var i=0;i<objs.length;i++){var o=objs[i];if(o.dead)continue;var n=Math.hypot(o.x-S.x,o.y-S.y);if(n<d){d=n;b=o}}return b}
+function act(){var o=nearest();if(!o){say('Тут пусто. Пройди пару кроків до дерева, каменю чи ягід.');return}var dmg=1;if(o.t==='t'&&S.axe)dmg=2;if(o.t==='r'&&S.pick)dmg=2;o.h-=dmg;if(o.h>0){say(o.t==='t'?'Рубаєш…':o.t==='r'?'Добуваєш камінь…':'Збираєш…');return}o.dead=true;o.timer=650+Math.random()*450;if(o.t==='t'){var w=S.axe?5:3;S.wood+=w;gainXP(3);say('Дерево зрубано. +'+w+' деревини')}else if(o.t==='r'){var st=S.pick?4:2;S.stone+=st;gainXP(3);say('Камінь добуто. +'+st+' каміння')}else{S.berry+=3;if(Math.random()<.38)S.cloth++;gainXP(2);say('Ягоди зібрано. +3')}hud()}
+E.action.addEventListener('pointerdown',function(e){e.preventDefault();act()});
+E.axe.addEventListener('click',function(){if(!S.axe&&can({wood:5,stone:4})){spend({wood:5,stone:4});S.axe=true;gainXP(5);say('Сокира готова. Тепер дерево швидше.');hud()}});
+E.pick.addEventListener('click',function(){if(!S.pick&&can({wood:4,stone:6})){spend({wood:4,stone:6});S.pick=true;gainXP(5);say('Кирка готова.');hud()}});
+E.tent.addEventListener('click',function(){if(!S.tent&&can({wood:12,cloth:3})){spend({wood:12,cloth:3});S.tent=1;gainXP(12);say('Намет побудовано цілком.');hud()}});
+E.upgrade.addEventListener('click',function(){if(S.tent===1&&can({wood:18,stone:12})){spend({wood:18,stone:12});S.tent=2;gainXP(18);say('Табір укріплено.');hud()}});
+E.food.addEventListener('click',function(){if(can({berry:3})){spend({berry:3});gainXP(2);say('Приготувала просту їжу.');hud()}});
+var drag=false;
+function joyAt(x,y){var r=E.joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=x-cx,dy=y-cy,d=Math.hypot(dx,dy),m=42;if(d>m){dx*=m/d;dy*=m/d}input.x=dx/m;input.y=dy/m;E.knob.style.transform='translate('+dx+'px,'+dy+'px)'}
+E.joy.addEventListener('pointerdown',function(e){drag=true;E.joy.setPointerCapture(e.pointerId);joyAt(e.clientX,e.clientY);e.preventDefault()});
+E.joy.addEventListener('pointermove',function(e){if(drag){joyAt(e.clientX,e.clientY);e.preventDefault()}});
+function joyEnd(){drag=false;input.x=0;input.y=0;E.knob.style.transform='translate(0,0)'}
+E.joy.addEventListener('pointerup',joyEnd);E.joy.addEventListener('pointercancel',joyEnd);
+function screen(x,y){return [W/2+x-S.cx,H/2+y-S.cy]}
+function sh(x,y,rx,ry){ctx.fillStyle='#00000022';ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
+function tree(x,y,o){sh(x,y+18,25,9);ctx.fillStyle='#6b4b32';ctx.fillRect(x-5,y-3,10,29);ctx.fillStyle=o.h<o.max?'#72714a':seasonData[S.season][2];[[-13,-12,20],[11,-17,21],[0,-31,23]].forEach(function(p){ctx.beginPath();ctx.arc(x+p[0],y+p[1],p[2],0,Math.PI*2);ctx.fill()});ctx.fillStyle='#ffffff15';ctx.beginPath();ctx.arc(x-8,y-28,7,0,Math.PI*2);ctx.fill()}
+function rock(x,y,o){sh(x,y+9,20,7);ctx.fillStyle=o.h<o.max?'#6f7977':'#88918e';ctx.beginPath();ctx.moveTo(x-20,y+8);ctx.lineTo(x-13,y-11);ctx.lineTo(x+3,y-18);ctx.lineTo(x+19,y-5);ctx.lineTo(x+16,y+11);ctx.lineTo(x-4,y+16);ctx.closePath();ctx.fill()}
+function berry(x,y){sh(x,y+8,18,7);ctx.fillStyle='#456e43';[[-9,0,12],[8,-3,13],[0,-12,13]].forEach(function(p){ctx.beginPath();ctx.arc(x+p[0],y+p[1],p[2],0,Math.PI*2);ctx.fill()});ctx.fillStyle='#b7434a';[[-9,-5],[4,-9],[9,2],[-1,1]].forEach(function(p){ctx.beginPath();ctx.arc(x+p[0],y+p[1],3,0,Math.PI*2);ctx.fill()})}
+function tent(){if(!S.tent)return;var p=screen(24,34),x=p[0],y=p[1];sh(x,y+19,36,9);ctx.fillStyle=S.tent===1?'#c7aa78':'#9b7958';ctx.beginPath();ctx.moveTo(x-33,y+18);ctx.lineTo(x,y-30);ctx.lineTo(x+33,y+18);ctx.closePath();ctx.fill();ctx.fillStyle='#664936';ctx.beginPath();ctx.moveTo(x,y-28);ctx.lineTo(x+3,y+18);ctx.lineTo(x+19,y+18);ctx.closePath();ctx.fill()}
+function player(){var x=W/2,y=H/2;sh(x,y+16,14,6);ctx.fillStyle='#e4c3a8';ctx.beginPath();ctx.arc(x,y-18,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#56383e';ctx.fillRect(x-9,y-9,18,23);ctx.fillStyle='#2c4147';ctx.beginPath();ctx.arc(x,y-27,9,Math.PI,Math.PI*2);ctx.fill();ctx.strokeStyle='#263632';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x-5,y+14);ctx.lineTo(x-7,y+24);ctx.moveTo(x+5,y+14);ctx.lineTo(x+7,y+24);ctx.stroke();if(nearest()){ctx.strokeStyle='#fff0b8dd';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,42,0,Math.PI*2);ctx.stroke()}}
+function update(){S.x+=input.x*2.45;S.y+=input.y*2.45;S.x=Math.max(-760,Math.min(760,S.x));S.y=Math.max(-760,Math.min(760,S.y));S.cx+=(S.x-S.cx)*.1;S.cy+=(S.y-S.cy)*.1;for(var i=0;i<objs.length;i++){var o=objs[i];if(o.dead){o.timer--;if(o.timer<=0){o.dead=false;o.h=o.max}}}hud()}
+function draw(){var sd=seasonData[S.season];ctx.fillStyle=sd[1];ctx.fillRect(0,0,W,H);ctx.fillStyle='#0000000b';for(var gx=-800;gx<800;gx+=90){for(var gy=-800;gy<800;gy+=90){var p=screen(gx+((gy/90)%2)*25,gy);ctx.beginPath();ctx.ellipse(p[0],p[1],43,18,.25,0,Math.PI*2);ctx.fill()}}ctx.strokeStyle=S.season===3?'#aabfc5':'#5d92a1';ctx.lineWidth=56;ctx.lineCap='round';ctx.beginPath();var p0=screen(-520,-760);ctx.moveTo(p0[0],p0[1]);for(var yy=-760;yy<=760;yy+=70){var pp=screen(-520+Math.sin(yy/125)*42,yy);ctx.lineTo(pp[0],pp[1])}ctx.stroke();tent();var vis=[];for(var i=0;i<objs.length;i++){if(!objs[i].dead){var sp=screen(objs[i].x,objs[i].y);vis.push([objs[i],sp[0],sp[1]])}}vis.sort(function(a,b){return a[2]-b[2]});for(var j=0;j<vis.length;j++){var v=vis[j],o=v[0],x=v[1],y=v[2];if(x<-80||x>W+80||y<-100||y>H+100)continue;if(o.t==='t')tree(x,y,o);else if(o.t==='r')rock(x,y,o);else berry(x,y)}player()}
+var tick=0;function loop(){update();draw();tick++;if(tick%2500===0){S.day++;if(S.day%8===0)S.season=(S.season+1)%4;say('Новий день. '+seasonData[S.season][0]+'.')}requestAnimationFrame(loop)}
+hud();E.boot.style.display='none';say('Гра працює. Поруч уже є дерево, камінь і ягоди.');loop();
+})();
+</script>
+</body>
+</html>
