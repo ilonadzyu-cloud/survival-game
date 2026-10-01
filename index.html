@@ -1,278 +1,574 @@
 <!doctype html>
 <html lang="uk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0a0d0c" />
-<title>Не та рибалка</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1110">
+<title>Гамняна рибалка</title>
 <style>
-  :root{
-    --bg:#090c0b;
-    --panel:#111513;
-    --panel2:#171c19;
-    --text:#e9e2d4;
-    --muted:#9f9a90;
-    --line:#2b332f;
-    --accent:#7f302d;
-    --accent2:#415247;
-    --good:#879174;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif}
-  body{min-height:100vh}
-  button{font:inherit}
-  .app{max-width:760px;margin:0 auto;padding:14px 14px calc(24px + env(safe-area-inset-bottom))}
-  .topbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .brand{font:700 13px/1.1 system-ui,-apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#cfc8b9}
-  .top-actions{display:flex;gap:8px}
-  .smallbtn{min-height:42px;border:1px solid var(--line);background:#0f1311;color:var(--text);border-radius:10px;padding:8px 11px;font:600 13px/1 system-ui,-apple-system,sans-serif}
-  .smallbtn:disabled{opacity:.45}
-
-  .scene{position:relative;height:250px;overflow:hidden;border:1px solid #202724;border-radius:18px;background:#111;isolation:isolate}
-  .scene::before,.scene::after{content:"";position:absolute;inset:0;pointer-events:none}
-  .scene::before{background:radial-gradient(circle at 50% 35%,transparent 0 28%,rgba(0,0,0,.32) 66%,rgba(0,0,0,.72) 100%);z-index:4}
-  .scene::after{opacity:.16;z-index:5;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 1px,transparent 1px 4px)}
-  .sky{position:absolute;inset:0;background:linear-gradient(#39423f 0%,#5a5c50 44%,#272e29 100%)}
-  .fog{position:absolute;left:-10%;right:-10%;bottom:28%;height:34%;background:linear-gradient(90deg,transparent 0%,rgba(215,213,199,.09) 24%,rgba(215,213,199,.2) 48%,rgba(215,213,199,.07) 72%,transparent 100%)}
-  .ground{position:absolute;left:-10%;right:-10%;bottom:-28px;height:43%;background:#1f2922;border-radius:50% 50% 0 0/18% 18% 0 0}
-  .fence{position:absolute;left:4%;right:4%;bottom:43px;height:70px;opacity:.82}
-  .fence i{position:absolute;bottom:0;width:8px;height:70px;background:#322b24;border-radius:2px}
-  .fence b{position:absolute;left:0;right:0;height:7px;background:#3a3129;transform:rotate(-1deg)}
-  .fence b:nth-of-type(1){top:19px}.fence b:nth-of-type(2){top:49px}
-  .house{display:none;position:absolute;bottom:43px;width:115px;height:76px;background:#2c2923;border:1px solid #191816}
-  .house::before{content:"";position:absolute;left:-9px;top:-40px;border-left:66px solid transparent;border-right:66px solid transparent;border-bottom:44px solid #211f1b}
-  .house::after{content:"";position:absolute;left:17px;bottom:16px;width:18px;height:23px;background:#8b6d40;box-shadow:57px 0 0 #6d5737;opacity:.55}
-  .h1{left:9%}.h2{right:7%;transform:scale(.82);transform-origin:bottom right}
-  .tree{display:none;position:absolute;bottom:35px;width:28px;height:128px;background:#181d19;border-radius:40% 45% 12px 12px}
-  .tree::before{content:"";position:absolute;left:-36px;top:-42px;width:98px;height:85px;border-radius:50%;background:#162019;box-shadow:-21px 22px 0 #18231b,22px 18px 0 #131c16}
-  .t1{left:8%}.t2{right:9%;transform:scale(.78);transform-origin:bottom}
-  .pigeon{display:none;position:absolute;right:21%;bottom:106px;width:38px;height:28px;border-radius:55% 55% 45% 45%;background:#313833;z-index:3}
-  .pigeon::before{content:"";position:absolute;right:-7px;top:3px;width:18px;height:18px;border-radius:50%;background:#3b433e}
-  .pigeon::after{content:"";position:absolute;right:-12px;top:9px;border-left:8px solid #927c55;border-top:3px solid transparent;border-bottom:3px solid transparent}
-  .label{position:absolute;left:14px;bottom:12px;z-index:6;padding:6px 9px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(7,9,8,.73);font:600 12px/1 system-ui,-apple-system,sans-serif;color:#d5cfc3}
-
-  .scene.village .house,.scene.village .tree{display:block}
-  .scene.village .fence{opacity:.5}
-  .scene.pigeon-scene .house,.scene.pigeon-scene .tree,.scene.pigeon-scene .pigeon{display:block}
-  .scene.dark .sky{background:linear-gradient(#1f2827 0%,#343932 47%,#171c19 100%)}
-
-  .panel{margin-top:12px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#121714,#0e1210);padding:18px 16px}
-  .chapter{font:700 12px/1 system-ui,-apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8f8a80;margin-bottom:10px}
-  .story{white-space:pre-line;font-size:18px;line-height:1.68;color:var(--text)}
-  .choices{display:grid;gap:10px;margin-top:18px}
-  .choice{width:100%;min-height:52px;text-align:left;color:var(--text);background:#171c19;border:1px solid #313a35;border-radius:12px;padding:13px 14px;font-size:16px;line-height:1.35}
-  .choice:active{background:#222a25;border-color:#46524c}
-  .next{text-align:center;font-family:system-ui,-apple-system,sans-serif;font-weight:700}
-  .result{margin-top:14px;border-left:3px solid var(--accent);background:#171412;padding:11px 12px;border-radius:8px;font:600 13px/1.45 system-ui,-apple-system,sans-serif;color:#d8d0c2}
-  .status-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-  .status{border:1px solid #384139;border-radius:999px;background:#151a17;padding:7px 9px;font:700 12px/1 system-ui,-apple-system,sans-serif;color:#cbc5ba}
-  .status.bad{border-color:#583330;background:#1e1514;color:#d4b2ab}
-  .status.good{border-color:#465243;background:#171c16;color:#c5cbb8}
-  .save-note{min-height:18px;margin-top:10px;color:#827f77;font:12px/1.4 system-ui,-apple-system,sans-serif}
-
-  .start{padding:30px 0 8px}
-  .title{font-size:38px;line-height:1.05;margin:0 0 8px;letter-spacing:.01em}
-  .subtitle{color:var(--muted);font-size:16px;line-height:1.5;margin-bottom:20px}
-  .start-actions{display:grid;gap:10px}
-  .primary{min-height:54px;border:1px solid #4a302e;border-radius:12px;background:#251817;color:#eadfd8;font:800 15px/1 system-ui,-apple-system,sans-serif}
-  .secondary{min-height:52px;border:1px solid var(--line);border-radius:12px;background:#121714;color:#d8d1c4;font:700 15px/1 system-ui,-apple-system,sans-serif}
-  .secondary:disabled{opacity:.42}
-  .storage-note{margin-top:14px;color:#77756e;font:12px/1.45 system-ui,-apple-system,sans-serif}
-
-  @media (max-width:520px){
-    .scene{height:215px}
-    .story{font-size:17px}
-    .panel{padding:16px 14px}
-    .title{font-size:34px}
-  }
+:root{
+  --bg:#0b0f0e; --panel:#111716; --panel2:#171e1c; --line:#2c3733;
+  --text:#e8e4d9; --muted:#9ca39d; --moss:#65705f; --rust:#7f4d3e;
+  --bad:#b56d62; --good:#8fa27f; --gold:#b9a271;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#080b0a;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+body{min-height:100vh}
+button{font:inherit}
+#app{min-height:100vh;background:
+  radial-gradient(circle at 50% 0%,rgba(73,86,77,.18),transparent 35%),
+  linear-gradient(#0c1110,#080b0a 70%)}
+.screen{max-width:760px;margin:0 auto;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
+.hidden{display:none!important}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 10px}
+.chapter{font-size:12px;letter-spacing:.16em;color:#b7b7aa;text-transform:uppercase}
+.iconbtn{border:1px solid var(--line);background:#121816;color:var(--text);border-radius:12px;min-width:44px;height:44px;padding:0 13px}
+.hero-title{font-family:Georgia,serif;font-size:36px;line-height:1.02;margin:24px 0 10px;letter-spacing:-.02em}
+.subtitle{color:var(--muted);line-height:1.55;margin:0 0 22px}
+.notice{border:1px solid var(--line);background:rgba(17,23,22,.88);padding:16px;border-radius:16px;line-height:1.55;margin:16px 0}
+.notice strong{display:block;margin-bottom:6px;color:#f0eadc}
+.primary,.choice,.secondary{
+  width:100%;border-radius:14px;padding:14px 15px;min-height:50px;text-align:left;
+  border:1px solid var(--line);color:var(--text);background:#151c1a
+}
+.primary{background:#e1dbcc;color:#171a18;border-color:#e1dbcc;text-align:center;font-weight:700}
+.secondary{text-align:center;background:#101513}
+.choice{margin-top:10px;line-height:1.35}
+.choice:active,.secondary:active,.iconbtn:active{background:#202925}
+.primary:active{opacity:.88}
+.save-note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+.scene-art{
+  position:relative;height:230px;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  background:#111716;margin:2px 0 14px
+}
+.scene-art.noart{height:145px}
+.scene-art .grain{position:absolute;inset:0;opacity:.16;pointer-events:none;background-image:
+  repeating-radial-gradient(circle at 20% 30%,#fff 0 1px,transparent 1px 5px)}
+.scene-art .fog{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(8,13,12,.1),rgba(8,11,10,.58)),
+  radial-gradient(ellipse at 50% 70%,rgba(210,214,199,.10),transparent 55%)}
+.scene-caption{position:absolute;left:12px;bottom:10px;padding:6px 9px;border-radius:999px;background:#090d0ccc;border:1px solid #ffffff18;color:#d8d5cb;font-size:12px}
+.story{font-family:Georgia,serif;font-size:18px;line-height:1.62;color:#ece7dc;white-space:pre-line}
+.story p{margin:0 0 13px}
+.choices{margin-top:14px}
+.statebar{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.statebar::-webkit-scrollbar{display:none}
+.statechip{flex:0 0 auto;max-width:280px;border:1px solid var(--line);background:#121817;border-radius:13px;padding:9px 11px}
+.statechip .n{font-size:12px;font-weight:800;letter-spacing:.03em}
+.statechip .e{font-size:11px;color:#c8c5bb;margin-top:4px;line-height:1.35}
+.statechip .plus{color:#a8b99b}.statechip .minus{color:#cc8d84}
+.flash{border-left:3px solid var(--gold);padding:12px 13px;background:#151b19;border-radius:10px;margin:14px 0;line-height:1.5;font-size:14px}
+.endcard{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:#121817;padding:16px}
+.footer{display:flex;gap:8px;margin-top:18px}
+.footer button{flex:1}
+.overlay{position:fixed;inset:0;background:rgba(4,6,6,.92);z-index:20;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);overflow:auto}
+.modal{max-width:720px;margin:0 auto}
+.modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 16px}
+.modaltitle{font-size:24px;font-family:Georgia,serif}
+.tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:#111715;color:var(--text);border-radius:999px;padding:9px 12px;white-space:nowrap}
+.tab.active{background:#ddd7c8;color:#171a18;border-color:#ddd7c8}
+.card{border:1px solid var(--line);background:#101513;border-radius:15px;padding:15px;margin:10px 0;line-height:1.55}
+.card h3{margin:0 0 8px;font-size:15px}
+.effectline{font-size:13px;margin:2px 0}
+.small{font-size:13px;color:var(--muted)}
+.newstate{border-color:#75664c}
+.newstate h3{font-size:17px}
+.newstate .big{font-weight:800;margin:4px 0 9px}
+.svgwrap{position:absolute;inset:0}
+@media(max-width:480px){
+  .hero-title{font-size:32px}.story{font-size:17px}.scene-art{height:205px}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="topbar">
-    <div class="brand">НЕ ТА РИБАЛКА</div>
-    <div class="top-actions" id="topActions" hidden>
-      <button class="smallbtn" id="saveBtn" type="button">Зберегти</button>
-      <button class="smallbtn" id="menuBtn" type="button">Меню</button>
+<div id="app">
+  <main class="screen" id="startScreen">
+    <div class="hero-title">Гамняна рибалка</div>
+    <p class="subtitle">Текстова виживалка з чорним гумором і хорором. Тут краще дивитись, шо ви нажимаєте.</p>
+
+    <div class="notice">
+      <strong>Кожний ваш вибір має наслідок.</strong>
+      Іноді одразу. Іноді ви про нього вже забудете.
+    </div>
+
+    <div class="notice">
+      <strong>Стани</strong>
+      Стани можуть відкривати нові варіанти дій. Деякі з них можна зняти. Деякі – самі пройдуть. А деякі будуть з вами, поки ви не розгребете ту хуйню, яку наробили.<br><br>
+      Будьте обережні – не все те, чим здається.
+    </div>
+
+    <button class="primary" id="newGame">Почати</button>
+    <button class="secondary hidden" id="continueGame" style="margin-top:10px">Продовжити</button>
+    <div class="save-note">Прогрес автоматично зберігається в цьому браузері.</div>
+  </main>
+
+  <main class="screen hidden" id="gameScreen">
+    <div class="top">
+      <div>
+        <div class="chapter">Розділ 1</div>
+        <div style="font-family:Georgia,serif;font-size:22px">Гамняна рибалка</div>
+      </div>
+      <button class="iconbtn" id="menuBtn">Меню</button>
+    </div>
+
+    <div class="statebar" id="statebar"></div>
+    <div class="scene-art" id="sceneArt"></div>
+    <div class="story" id="story"></div>
+    <div id="flash"></div>
+    <div class="choices" id="choices"></div>
+
+    <div class="footer">
+      <button class="secondary" id="saveBtn">Зберегти</button>
+      <button class="secondary" id="restartBtn">З початку</button>
+    </div>
+  </main>
+
+  <div class="overlay hidden" id="menuOverlay">
+    <div class="modal">
+      <div class="modalhead">
+        <div class="modaltitle">Меню</div>
+        <button class="iconbtn" id="closeMenu">Закрити</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="states">Стани</button>
+        <button class="tab" data-tab="rules">Як це працює</button>
+        <button class="tab" data-tab="companions">Компаньйони</button>
+      </div>
+      <div id="menuContent"></div>
     </div>
   </div>
 
-  <section id="startScreen" class="start">
-    <h1 class="title">Не та рибалка</h1>
-    <div class="subtitle">Текстова виживалка. Чорна комедія, хорор і рішення, які іноді краще було не приймати.</div>
-    <div class="start-actions">
-      <button class="primary" id="newBtn" type="button">Нова гра</button>
-      <button class="secondary" id="continueBtn" type="button">Продовжити</button>
+  <div class="overlay hidden" id="stateOverlay">
+    <div class="modal">
+      <div class="modalhead">
+        <div class="modaltitle">Новий стан</div>
+      </div>
+      <div id="newStateCard"></div>
+      <button class="primary" id="stateOk">Поняв</button>
     </div>
-    <div class="storage-note">Прогрес зберігається у цьому браузері на цьому пристрої.</div>
-  </section>
-
-  <main id="game" hidden>
-    <div id="scene" class="scene dark">
-      <div class="sky"></div><div class="fog"></div><div class="ground"></div>
-      <div class="fence"><b></b><b></b><i style="left:7%"></i><i style="left:19%"></i><i style="left:33%"></i><i style="left:48%"></i><i style="left:64%"></i><i style="left:81%"></i><i style="left:94%"></i></div>
-      <div class="house h1"></div><div class="house h2"></div><div class="tree t1"></div><div class="tree t2"></div><div class="pigeon"></div>
-      <div id="sceneLabel" class="label">Ранок</div>
-    </div>
-
-    <section class="panel">
-      <div class="chapter">Розділ 1</div>
-      <div id="story" class="story"></div>
-      <div id="result" class="result" hidden></div>
-      <div id="choices" class="choices"></div>
-      <div id="statuses" class="status-wrap"></div>
-      <div id="saveNote" class="save-note" aria-live="polite"></div>
-    </section>
-  </main>
+  </div>
 </div>
 
 <script>
 (function(){
-  'use strict';
-  var KEY='ne-ta-rybalka-save-v1';
-  var startScreen=document.getElementById('startScreen');
-  var game=document.getElementById('game');
-  var topActions=document.getElementById('topActions');
-  var continueBtn=document.getElementById('continueBtn');
-  var newBtn=document.getElementById('newBtn');
-  var saveBtn=document.getElementById('saveBtn');
-  var menuBtn=document.getElementById('menuBtn');
-  var story=document.getElementById('story');
-  var choices=document.getElementById('choices');
-  var result=document.getElementById('result');
-  var statuses=document.getElementById('statuses');
-  var saveNote=document.getElementById('saveNote');
-  var scene=document.getElementById('scene');
-  var sceneLabel=document.getElementById('sceneLabel');
+  const KEY='gamnyana_rybalka_save_v3';
 
-  function fresh(){return {node:'intro1',pohuizm:2,attention:-2,agility:-1,thirst:25,pigeonRep:0,dirty:0,birdHumiliated:false,notes:[]};}
-  var state=fresh();
+  const stateDefs={
+    hangover:{
+      name:'ЖОСТКИЙ БУДУНЯРА',
+      effects:['+2 Похуїзм','-2 Уважність','-1 Спритність','Спрага +25%'],
+      affects:'уважність, спритність, спрагу і деякі варіанти дій.',
+      remove:'вода, їжа, сон і трохи часу.',
+      extra:'Рот: капнути б водички.'
+    },
+    pigeonHumiliated:{
+      name:'СРАНИЙ ГОЛУБ ВАС ПРИНИЗИВ',
+      effects:['+1 Похуїзм','-1 Харизма'],
+      affects:'реакції персонажів, частину відповідей і деякі події.',
+      remove:'відмити куртку або нормально помитись.'
+    },
+    angry:{
+      name:'ЗЛИЙ',
+      effects:['+2 Сила','+1 Похуїзм','-2 Харизма'],
+      affects:'агресивні варіанти дій.',
+      remove:'залежить від того, шо вас так розізлило.'
+    },
+    wildSkunk:{
+      name:'ДИКИЙ СКУНС',
+      effects:['+1 Похуїзм','-3 Харизма'],
+      affects:'реакції людей і тварин.',
+      remove:'помитись і змінити або випрати одяг.'
+    }
+  };
 
-  var nodes={
-    intro1:{
-      scene:'dark', label:'Ранок. Десь не там.',
-      text:'Останнє, що ви пам’ятаєте – рибалка.\n\nКомарі вас жерли, собаки такі. Поплавок не рухався вже хрін знає скільки. Хтось відкрив ще одну пляшку. Далі пам’ять починає працювати кусками.',
-      next:'intro2'
+  const fresh=()=>({
+    node:'intro',
+    activeStates:['hangover'],
+    knownStates:['hangover'],
+    seenStateInfo:['hangover'],
+    pigeonRelation:0,
+    dirt:0,
+    wellKnown:false,
+    companion:false,
+    choicesMade:[],
+    lastSaved:Date.now()
+  });
+
+  let G=fresh();
+
+  const startScreen=document.getElementById('startScreen');
+  const gameScreen=document.getElementById('gameScreen');
+  const story=document.getElementById('story');
+  const choices=document.getElementById('choices');
+  const statebar=document.getElementById('statebar');
+  const sceneArt=document.getElementById('sceneArt');
+  const flash=document.getElementById('flash');
+  const menuOverlay=document.getElementById('menuOverlay');
+  const menuContent=document.getElementById('menuContent');
+  const stateOverlay=document.getElementById('stateOverlay');
+  const newStateCard=document.getElementById('newStateCard');
+
+  function save(){
+    G.lastSaved=Date.now();
+    localStorage.setItem(KEY,JSON.stringify(G));
+  }
+  function hasSave(){ return !!localStorage.getItem(KEY); }
+  function load(){
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(!raw)return false;
+      const obj=JSON.parse(raw);
+      if(!obj || !obj.node)return false;
+      G=Object.assign(fresh(),obj);
+      return true;
+    }catch(e){return false}
+  }
+
+  function art(type){
+    const baseFog='<div class="grain"></div><div class="fog"></div>';
+    if(type==='hero'){
+      sceneArt.className='scene-art';
+      sceneArt.innerHTML=`
+      <svg class="svgwrap" viewBox="0 0 760 260" preserveAspectRatio="xMidYMid slice" aria-label="Бородатий чоловік прокинувся біля старого паркану">
+        <defs>
+          <linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#69736e"/><stop offset=".62" stop-color="#4d554d"/><stop offset="1" stop-color="#222a26"/></linearGradient>
+        </defs>
+        <rect width="760" height="260" fill="url(#hbg)"/>
+        <path d="M0 205 Q120 170 240 205 T500 196 T760 203 V260 H0Z" fill="#263129"/>
+        <g opacity=".75" stroke="#302d27" stroke-width="7">
+          <path d="M55 110v105M112 102v108M170 116v98M226 98v114M286 111v106M342 101v115"/>
+          <path d="M20 142h355M20 189h355"/>
+        </g>
+        <g transform="translate(455 38)">
+          <path d="M15 205 C18 153 40 123 84 118 C129 122 151 156 154 205Z" fill="#29302e"/>
+          <path d="M54 119 C49 94 52 54 82 43 C113 46 125 73 120 106 C116 131 101 143 84 143 C68 143 58 136 54 119Z" fill="#b89b7c"/>
+          <path d="M48 76 C49 48 62 32 84 31 C108 31 124 47 126 76 C112 64 99 59 84 59 C68 59 57 64 48 76Z" fill="#322c27"/>
+          <path d="M55 102 C61 133 72 146 84 148 C99 147 113 132 119 102 C108 116 98 122 84 122 C70 122 62 116 55 102Z" fill="#3a3029"/>
+          <path d="M60 99 Q84 112 111 98 Q108 133 84 137 Q62 131 60 99Z" fill="#40352d"/>
+          <path d="M64 82q7-6 15 0M92 82q8-6 16 0" stroke="#2d2824" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="72" cy="87" r="2.5" fill="#1f2522"/><circle cx="100" cy="87" r="2.5" fill="#1f2522"/>
+          <path d="M85 88l-3 14 8 1" stroke="#745f4d" stroke-width="2.5" fill="none"/>
+          <path d="M73 112q12 5 24 0" stroke="#6c5145" stroke-width="2.5" fill="none"/>
+          <path d="M36 201l12-62 34 14-11 48M132 202l-13-64-33 15 10 48" fill="#354039"/>
+        </g>
+      </svg>${baseFog}<div class="scene-caption">Ранок. Десь дуже не там.</div>`;
+      return;
+    }
+    if(type==='pigeon'){
+      sceneArt.className='scene-art';
+      sceneArt.innerHTML=`
+      <svg class="svgwrap" viewBox="0 0 760 260" preserveAspectRatio="xMidYMid slice" aria-label="Жирний голуб сидить на старому паркані">
+        <defs><linearGradient id="pbg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#66716f"/><stop offset=".58" stop-color="#4d554f"/><stop offset="1" stop-color="#232925"/></linearGradient></defs>
+        <rect width="760" height="260" fill="url(#pbg)"/>
+        <path d="M0 210Q180 185 380 209T760 203V260H0Z" fill="#263028"/>
+        <g opacity=".82" stroke="#302d27" stroke-width="8">
+          <path d="M0 143h760M0 202h760"/>
+          <path d="M70 105v121M185 117v110M310 100v126M445 116v112M585 101v126M710 113v112"/>
+        </g>
+        <g transform="translate(470 56)">
+          <ellipse cx="84" cy="106" rx="64" ry="55" fill="#6a6f70"/>
+          <ellipse cx="84" cy="56" rx="39" ry="36" fill="#747a7a"/>
+          <ellipse cx="70" cy="58" rx="22" ry="26" fill="#7d8281"/>
+          <path d="M50 74q35 20 69 0q-8 39-35 53q-27-13-34-53Z" fill="#555d5d"/>
+          <path d="M52 75q26 13 60 4" stroke="#46524c" stroke-width="7" fill="none"/>
+          <circle cx="69" cy="49" r="5.5" fill="#e5d3a6"/><circle cx="69" cy="49" r="2.8" fill="#1b211f"/>
+          <path d="M42 58l23 8-23 7Z" fill="#b29269"/>
+          <path d="M70 161v24M99 159v26" stroke="#ab8170" stroke-width="4"/>
+          <path d="M57 185h25M87 185h25" stroke="#ab8170" stroke-width="4" stroke-linecap="round"/>
+        </g>
+      </svg>${baseFog}<div class="scene-caption">Паркан. Голуб. Нахабна морда.</div>`;
+      return;
+    }
+    if(type==='road'){
+      sceneArt.className='scene-art noart';
+      sceneArt.innerHTML=`
+      <svg class="svgwrap" viewBox="0 0 760 180" preserveAspectRatio="xMidYMid slice" aria-label="Стара сільська дорога">
+        <rect width="760" height="180" fill="#46504c"/>
+        <path d="M290 180L352 62h55l70 118Z" fill="#6d6557"/>
+        <path d="M0 132Q170 104 314 137L290 180H0Z" fill="#273028"/>
+        <path d="M470 180l-54-62q171-16 344 9v53Z" fill="#273028"/>
+        <g fill="#3a332b">
+          <rect x="72" y="55" width="110" height="84"/><path d="M54 64l74-47 77 47Z"/>
+          <rect x="565" y="48" width="122" height="92"/><path d="M545 59l82-48 83 48Z"/>
+        </g>
+      </svg>${baseFog}<div class="scene-caption">Стара дорога. Голуб не відстає.</div>`;
+      return;
+    }
+    sceneArt.className='scene-art noart';
+    sceneArt.innerHTML=`<div style="position:absolute;inset:0;background:linear-gradient(#49524e,#202722)"></div>${baseFog}<div class="scene-caption">Село.</div>`;
+  }
+
+  function paras(text){
+    return text.split('\n\n').map(p=>'<p>'+escapeHtml(p)+'</p>').join('');
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+  function addState(id){
+    if(!G.activeStates.includes(id))G.activeStates.push(id);
+    if(!G.knownStates.includes(id))G.knownStates.push(id);
+    if(!G.seenStateInfo.includes(id)){
+      G.seenStateInfo.push(id);
+      save();
+      showStateInfo(id);
+    }
+  }
+
+  function stateEffectsHtml(def){
+    return def.effects.map(x=>{
+      const cls=x.trim().startsWith('+')?'plus':x.trim().startsWith('-')?'minus':'';
+      return '<span class="'+cls+'">'+escapeHtml(x)+'</span>';
+    }).join(' · ');
+  }
+
+  function renderStates(){
+    statebar.innerHTML='';
+    G.activeStates.forEach(id=>{
+      const d=stateDefs[id]; if(!d)return;
+      const el=document.createElement('div');
+      el.className='statechip';
+      el.innerHTML='<div class="n">'+escapeHtml(d.name)+'</div><div class="e">'+stateEffectsHtml(d)+'</div>';
+      statebar.appendChild(el);
+    });
+  }
+
+  function showStateInfo(id){
+    const d=stateDefs[id]; if(!d)return;
+    newStateCard.innerHTML=`
+      <div class="card newstate">
+        <h3>${escapeHtml(d.name)}</h3>
+        <div class="big">${stateEffectsHtml(d)}</div>
+        ${d.extra?'<div class="effectline">'+escapeHtml(d.extra)+'</div>':''}
+        <div class="effectline"><b>Впливає на:</b> ${escapeHtml(d.affects)}</div>
+        <div class="effectline"><b>Як позбутись:</b> ${escapeHtml(d.remove)}</div>
+        <div class="small" style="margin-top:10px">Будьте обережні – не все те, чим здається.</div>
+      </div>`;
+    stateOverlay.classList.remove('hidden');
+  }
+
+  const nodes={
+    intro:{
+      art:'hero',
+      text:`Останнє, що ви пам’ятаєте – рибалка. Риба не клювала, комари вас жерли, собаки такі. Потім була пляшка. Потім, здається, ще одна. Далі пам’ять уже не дуже старалась.
+
+Ви відкриваєте очі на мокрій траві біля якогось старого паркану. Голова гуде, в роті сухо, куртка в землі. Ні машини, ні ваших речей, ні людей, з якими ви сюди приїхали. І місце взагалі якесь не те.`,
+      choices:[['Далі',()=>go('wake')]]
     },
-    intro2:{
-      scene:'dark', label:'Мокра трава. Чужий паркан.',
-      text:'Ви відкриваєте очі.\n\nПід вами мокра трава. Перед носом старий дерев’яний паркан. Голова гуде. У роті сухо.\n\nПерша думка: «Блять. Де я?»\n\nДруга: «Капнути б водички».',
-      next:'intro3'
-    },
-    intro3:{
-      scene:'village dark', label:'Село. Ранок.',
-      text:'Ви сідаєте й дивитесь навколо.\n\nЗа парканом старі хати. Дорога втоптана. Ні машин, ні проводів. Тихо.\n\nДесь далеко гавкає собака.\n\nВи ще не встигли нормально подумати, як на плече падає щось тепле.',
-      next:'pigeon'
+    wake:{
+      art:'none',
+      text:`Ви піднімаєтесь і кілька секунд просто дивитесь навколо. Дерев’яні хати, криві паркани, дорога з бруду. Жодного стовпа, машини чи хоч чогось, шо мало би бути в нормальному селі.
+
+Хотілось би спочатку зрозуміти, де ви. Але організм наполягає на іншому: капнути б водички.`,
+      choices:[['Далі',()=>go('pigeon')]]
     },
     pigeon:{
-      scene:'pigeon-scene dark', label:'Паркан. Один жирний голуб.',
-      text:'На куртці свіжа біло-зелена купа.\n\nНа паркані сидить голуб. Жирний, упітаний. Дивиться прямо на вас.\n\nСука.',
+      art:'pigeon',
+      enter:()=>addState('pigeonHumiliated'),
+      text:`На плече падає щось тепле. Ви повільно повертаєте голову і бачите на куртці свіжу біло-зелену купу.
+
+На паркані сидить жирний голуб. Упітаний, спокійний і дивиться прямо на вас. Не відлітає. Навіть не робить вигляд, шо йому соромно.`,
       choices:[
-        ['Кинути в нього каменюкою',function(){state.pigeonRep-=2;state.birdHumiliated=true;state.dirty+=1;state.notes.push('Кинули камінь у голуба');go('stone')}],
-        ['Витерти плече травою',function(){state.birdHumiliated=true;state.notes.push('Витерли плече травою');go('wipe')}],
-        ['Сказати: «Я тебе запам’ятав»',function(){state.pigeonRep+=1;state.birdHumiliated=true;state.notes.push('Офіційно звернулись до голуба');go('remember')}],
-        ['Не чіпати. Може, тут це якийсь місцевий обряд',function(){state.pigeonRep+=2;state.dirty+=2;state.pohuizm+=1;state.birdHumiliated=true;state.notes.push('Не стали чіпати голубине лайно');go('leave')}]
+        ['Кинути в нього каменюкою',()=>{G.pigeonRelation-=2;G.wellKnown=true;G.choicesMade.push('Кинули камінь у голуба');go('stone')}],
+        ['Витерти плече травою',()=>{G.pigeonRelation-=1;G.dirt=Math.max(0,G.dirt-1);G.choicesMade.push('Витерли куртку травою');go('wipe')}],
+        ['Сказати: «Я тебе запам’ятав»',()=>{G.pigeonRelation+=1;G.choicesMade.push('Офіційно запам’ятали голуба');go('remember')}],
+        ['Не чіпати. Може, тут так прийнято',()=>{G.pigeonRelation+=2;G.dirt+=2;G.choicesMade.push('Не стали чіпати голубине лайно');go('leave')}]
       ]
     },
     stone:{
-      scene:'pigeon-scene dark', label:'Паркан.',
-      text:'Камінь летить повз голуба й б’є в металеве відро за парканом.\n\nГуркіт на все село.\n\nГолуб не відлітає. Просто дивиться на вас ще уважніше.',
-      result:'Голуби це запам’ятають.',
-      next:'end'
+      art:'pigeon',
+      text:`Камінь летить мимо голуба і з гуркотом влітає в металеве відро за парканом. З найближчої хати хтось оре так, що навіть вам стало ясно: вас уже не люблять.
+
+Голуб не ворухнувся. Зате людина з двору, поки матюкається, показує рукою кудись далі по дорозі. Там видно колодязь. Ну хоть вода.`,
+      flash:'Не сама розумна дія раптом дала користь. Ви знаєте, де колодязь.',
+      choices:[['Йти далі',()=>go('follow')]]
     },
     wipe:{
-      scene:'village dark', label:'Паркан.',
-      text:'Ви витираєте плече травою.\n\nСтало не добре. Просто менше видно.\n\nГолуб сидить на місці.',
-      result:'Стан: ПТАХ ВАС ПРИНИЗИВ.',
-      next:'end'
+      art:'pigeon',
+      text:`Ви витираєте плече травою. Куртка чистішою не стала, просто тепер пляма розмазана ширше.
+
+Голуб проводжає вас поглядом. Ви йдете далі.`,
+      choices:[['Йти далі',()=>go('follow')]]
     },
     remember:{
-      scene:'pigeon-scene dark', label:'Паркан.',
-      text:'– Я тебе запам’ятав.\n\nГолуб нахиляє голову набік.\n\nПотім на інший.\n\nВи не знаєте чому, але складається враження, що він теж вас запам’ятав.',
-      result:'Щось змінилося у відносинах з голубами.',
-      next:'end'
+      art:'pigeon',
+      text:`– Я тебе запам’ятав.
+
+Голуб нахиляє голову набік. Потім на другий. Ви кілька секунд дивитесь один на одного, після чого він спокійно починає чистити крило. От їбанько.`,
+      choices:[['Йти далі',()=>go('follow')]]
     },
     leave:{
-      scene:'pigeon-scene dark', label:'Паркан.',
-      text:'Ви дивитесь на плече. Потім на голуба.\n\n– Ладно. Хуй з тобою.\n\nГолуб роздуває груди.',
-      result:'Похуїзм +1. Бруд +2. Голуби: підозріло довольні.',
-      next:'end'
+      art:'pigeon',
+      text:`Ви дивитесь на плече, потім на голуба і вирішуєте нічого не робити. Мало лі шо тут за порядки.
+
+Голуб роздуває груди. Чомусь це виглядає так, ніби він щойно виграв.`,
+      choices:[['Йти далі',()=>go('follow')]]
+    },
+    follow:{
+      art:'road',
+      text:`Ви проходите трохи по дорозі й помічаєте того самого голуба вже на іншому паркані. Ще метрів через тридцять він сидить на даху. Потім знову попереду.
+
+Ви зупиняєтесь. Голуб теж. Ну добре.`,
+      choices:[
+        ['Ігнорувати його',()=>{G.pigeonRelation+=0;go('talk')}],
+        ['Сказати: «Шо тобі треба?»',()=>{G.pigeonRelation+=1;go('talk')}],
+        ['Прогнати сраного переслідувача',()=>{G.pigeonRelation-=1;go('talk')}]
+      ]
+    },
+    talk:{
+      art:'pigeon',
+      text:`– Шановний, ти не туди йдеш.
+
+Ви завмираєте і дивитесь по сторонах. Нікого. Голуб сидить на паркані.
+
+– Я до тебе говорю.
+
+Все. Допились. Галюни після будуна.`,
+      choices:[
+        ['«Не пизди.»',()=>go('evpapiy1')],
+        ['«Ти хто, блять?»',()=>go('evpapiy2')],
+        ['Мовчки відійти. Може, попустить',()=>go('evpapiy3')]
+      ]
+    },
+    evpapiy1:{
+      art:'pigeon',
+      text:`Голуб дивиться на вас так, ніби це ви тут несете хуйню.
+
+– Євпапій.
+
+– Шо?
+
+– Євпапій. І не йди туда.
+
+Ви ще не вирішили, шо гірше: говорящий голуб чи те, що він уже починає вас бісити.`,
+      enter:()=>{G.companion=true},
+      choices:[['Далі',()=>go('end')]]
+    },
+    evpapiy2:{
+      art:'pigeon',
+      text:`– Євпапій.
+
+Ви мовчите.
+
+– Євпапій, – повторює голуб. – Шановний, ти тугий чи після вчорашнього?
+
+От їбанько. Голуб не тільки говорить. Він ще й підпизджує.`,
+      enter:()=>{G.companion=true},
+      choices:[['Далі',()=>go('end')]]
+    },
+    evpapiy3:{
+      art:'road',
+      text:`Ви мовчки йдете в інший бік. Голуб перелетів на наступний паркан.
+
+– Та йди, йди. Потім не пизди, шо я не казав.
+
+Ви зупиняєтесь. Галюцинація виявилась дуже настирлива. І звати її, як з’ясувалось через хвилину, Євпапій.`,
+      enter:()=>{G.companion=true},
+      choices:[['Далі',()=>go('end')]]
     },
     end:{
-      scene:'village dark', label:'Село. Далі.',
-      text:'Ви встаєте.\n\nСело мовчить.\n\nПопереду дорога між хатами. За ними темніє ліс.\n\nДесь позаду знову воркує голуб.\n\nВи не обертаєтесь.',
-      result:'Кінець тестового шматка першого розділу.',
+      art:'road',
+      text:`Євпапій лишається поруч. Чому саме він до вас причепився, ви поки не знаєте. Та й питань зараз трохи більше, ніж хотілось би.
+
+Ви стоїте посеред чужого села з жостким будунярою, обісраною курткою і голубом, який говорить. Рибалка явно пішла не по плану.`,
       end:true
     }
   };
 
-  function safeLoad(){
-    try{
-      var raw=localStorage.getItem(KEY);
-      if(!raw)return null;
-      var parsed=JSON.parse(raw);
-      if(!parsed || !parsed.node || !nodes[parsed.node])return null;
-      return parsed;
-    }catch(e){return null;}
+  function go(id){
+    G.node=id;
+    save();
+    render();
   }
-
-  function save(silent){
-    try{
-      localStorage.setItem(KEY,JSON.stringify(state));
-      if(!silent){saveNote.textContent='Збережено.';setTimeout(function(){saveNote.textContent='';},1200);}
-      updateContinue();
-    }catch(e){
-      if(!silent)saveNote.textContent='Не вдалося зберегти прогрес у цьому браузері.';
-    }
-  }
-
-  function updateContinue(){continueBtn.disabled=!safeLoad();}
-
-  function setScene(classes,label){scene.className='scene '+classes;sceneLabel.textContent=label;}
-
-  function renderStatuses(){
-    statuses.innerHTML='';
-    addStatus('ЖОСТКИЙ БУДУНЯРА','bad');
-    if(state.birdHumiliated)addStatus('ПТАХ ВАС ПРИНИЗИВ','bad');
-    if(state.dirty>=2)addStatus('ДИКИЙ СКУНС','bad');
-  }
-
-  function addStatus(text,kind){
-    var span=document.createElement('span');span.className='status '+(kind||'');span.textContent=text;statuses.appendChild(span);
-  }
-
-  function button(text,fn,extra){
-    var b=document.createElement('button');b.type='button';b.className='choice '+(extra||'');b.textContent=text;b.addEventListener('click',fn);return b;
-  }
-
-  function go(id){state.node=id;save(true);render();}
 
   function render(){
-    var n=nodes[state.node];
-    setScene(n.scene,n.label);
-    story.textContent=n.text;
-    result.hidden=!n.result;
-    result.textContent=n.result||'';
+    const n=nodes[G.node]||nodes.intro;
+    renderStates();
+    art(n.art||'none');
+    story.innerHTML=paras(n.text);
+    flash.innerHTML=n.flash?'<div class="flash">'+escapeHtml(n.flash)+'</div>':'';
     choices.innerHTML='';
-    renderStatuses();
+    if(n.enter && !G['_entered_'+G.node]){
+      G['_entered_'+G.node]=true;
+      n.enter();
+      save();
+      renderStates();
+    }
     if(n.choices){
-      n.choices.forEach(function(item){choices.appendChild(button(item[0],item[1]));});
-    }else if(n.next){
-      choices.appendChild(button('Далі',function(){go(n.next);},'next'));
-    }else if(n.end){
-      choices.appendChild(button('Почати цей шматок заново',function(){state=fresh();save(true);render();},'next'));
+      n.choices.forEach(([label,fn])=>{
+        const b=document.createElement('button');
+        b.type='button'; b.className='choice'; b.textContent=label;
+        b.addEventListener('click',fn);
+        choices.appendChild(b);
+      });
+    }
+    if(n.end){
+      const e=document.createElement('div');
+      e.className='endcard';
+      e.innerHTML='<b>Кінець демо першого шматка.</b><div class="small" style="margin-top:7px">Прогрес збережений. Наступний шматок можна додавати сюди без скидання проходження.</div>';
+      choices.appendChild(e);
+    }
+    save();
+  }
+
+  function showGame(){
+    startScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+    render();
+  }
+
+  function renderMenu(tab='states'){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    if(tab==='states'){
+      const known=G.knownStates.map(id=>{
+        const d=stateDefs[id]; if(!d)return '';
+        return `<div class="card"><h3>${escapeHtml(d.name)}</h3>
+          <div class="effectline">${stateEffectsHtml(d)}</div>
+          ${d.extra?'<div class="effectline">'+escapeHtml(d.extra)+'</div>':''}
+          <div class="effectline"><b>Впливає на:</b> ${escapeHtml(d.affects)}</div>
+          <div class="effectline"><b>Як позбутись:</b> ${escapeHtml(d.remove)}</div></div>`;
+      }).join('');
+      menuContent.innerHTML=`<div class="card"><b>Стани можуть відкривати нові варіанти дій.</b><br>
+        Деякі з них можна зняти. Деякі – самі пройдуть. А деякі будуть з вами, поки ви не розгребете ту хуйню, яку наробили.<br><br>
+        <span class="small">Будьте обережні – не все те, чим здається.</span></div>${known}`;
+    } else if(tab==='rules'){
+      menuContent.innerHTML=`<div class="card"><h3>Кожний ваш вибір має наслідок.</h3>
+        Іноді одразу. Іноді ви про нього вже забудете.</div>
+        <div class="card">Не всі зміни показуються цифрами. Частина виборів впливає на майбутні події, стосунки і доступні дії.</div>
+        <div class="card">Гра автоматично зберігає прогрес після кожної сторінки. Кнопка «Зберегти» робить те саме вручну.</div>`;
+    } else {
+      menuContent.innerHTML=G.companion
+        ? `<div class="card"><h3>Євпапій</h3><div class="small">Жирний голуб, який чомусь причепився до вас. Говорить. Підпизджує. Уже бісить.</div></div>`
+        : `<div class="card small">Поки ніхто до вас не причепився. Насолоджуйтесь.</div>`;
     }
   }
 
-  function enterGame(){startScreen.hidden=true;game.hidden=false;topActions.hidden=false;render();}
-  function showMenu(){game.hidden=true;topActions.hidden=true;startScreen.hidden=false;updateContinue();}
+  document.getElementById('newGame').addEventListener('click',()=>{
+    G=fresh(); save(); showGame();
+  });
+  document.getElementById('continueGame').addEventListener('click',()=>{
+    if(load())showGame();
+  });
+  document.getElementById('saveBtn').addEventListener('click',()=>{
+    save();
+    const old=document.getElementById('saveBtn').textContent;
+    document.getElementById('saveBtn').textContent='Збережено';
+    setTimeout(()=>document.getElementById('saveBtn').textContent=old,900);
+  });
+  document.getElementById('restartBtn').addEventListener('click',()=>{
+    if(confirm('Почати розділ з самого початку?')){
+      G=fresh(); save(); render();
+    }
+  });
+  document.getElementById('menuBtn').addEventListener('click',()=>{
+    renderMenu('states'); menuOverlay.classList.remove('hidden');
+  });
+  document.getElementById('closeMenu').addEventListener('click',()=>menuOverlay.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>renderMenu(b.dataset.tab)));
+  document.getElementById('stateOk').addEventListener('click',()=>stateOverlay.classList.add('hidden'));
 
-  newBtn.addEventListener('click',function(){state=fresh();save(true);enterGame();});
-  continueBtn.addEventListener('click',function(){var loaded=safeLoad();if(loaded){state=Object.assign(fresh(),loaded);enterGame();}});
-  saveBtn.addEventListener('click',function(){save(false);});
-  menuBtn.addEventListener('click',showMenu);
-
-  updateContinue();
+  if(hasSave())document.getElementById('continueGame').classList.remove('hidden');
 })();
 </script>
 </body>
