@@ -111,7 +111,9 @@ button:active{transform:translateY(1px);opacity:.86}
 
 .timePanel{border:1px solid var(--line);background:#101512;border-radius:14px;padding:9px 11px;margin-bottom:10px}
 .timeHead{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px}.timeHead b{font-size:13px}.timeTrack{position:relative;height:8px;border-radius:999px;background:#252d29;margin-top:8px;overflow:visible}.timeFill{height:100%;border-radius:999px;background:#777667}.timeMarker{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:18px;line-height:1;filter:drop-shadow(0 2px 2px #000)}
-.statCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.statLvl{font-size:11px;color:var(--muted);margin-top:2px}.statNum{font-weight:900;white-space:nowrap}.segments{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0 7px}.seg{height:11px;border-radius:3px;background:#252d29;border:1px solid #303a35}.seg.base{background:#c9bea1;border-color:#c9bea1}.seg.buff{background:#8ea27d;border-color:#8ea27d}.seg.debuff{background:#6b3f3b;border-color:#a55e57;opacity:.8}.statBreakdown{font-size:11px;color:var(--muted)}
+.statCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.statLvl{font-size:11px;color:var(--muted);margin-top:2px}.statNum{font-weight:900;white-space:nowrap}.segments{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0 7px}.seg{height:11px;border-radius:3px;background:#252d29;border:1px solid #303a35}.seg.base{background:#c9bea1;border-color:#c9bea1}.seg.buff{background:#8ea27d;border-color:#8ea27d}.seg.debuff{background:#6b3f3b;border-color:#a55e57;opacity:.8}.statBreakdown{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px}
+.needsBar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:11px}.needCompact{border:1px solid var(--line);border-radius:11px;padding:8px;background:#101512;min-width:0}.needCompact .needrow{font-size:12px;margin:0;gap:4px}.needCompact .bar{height:6px}.statusReason{font-size:12px;line-height:1.45;color:var(--muted);margin-top:5px}.statLegend{font-size:12px;line-height:1.5;margin-top:9px}
+@media(max-width:470px){.needsBar{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .inventoryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.invSlot{border:1px solid var(--line);border-radius:13px;background:#121714;padding:11px;min-height:105px}.invSlot.empty{display:flex;align-items:center;justify-content:center;color:#666}.invHead{display:flex;align-items:center;gap:9px}.invIcon{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#1b211d;display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 34px}.invName{font-weight:850}.invDesc{font-size:12px;color:var(--muted);line-height:1.4;margin-top:5px}.invBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.miniBtn{border:1px solid var(--line);background:#191f1b;color:var(--text);border-radius:9px;padding:7px 9px;font-size:12px;min-height:0}.miniBtn.danger{color:#d6a39b}.sectionTitle{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}.saveSlot{display:grid;gap:8px}.saveMeta{font-size:12px;color:var(--muted)}.saveBtns{display:flex;gap:7px}.saveBtns button{flex:1}.lockedMsg{padding:20px;text-align:center;color:var(--muted)}
 .healthbar span,.needgood span{background:#9bad90}.needmid span{background:#b6a06c}.needlow span{background:#a97055}.needcrit span{background:#8f4f4a}
 @media(max-width:470px){.inventoryGrid{grid-template-columns:1fr 1fr}.segments{gap:3px}.seg{height:10px}}
@@ -145,6 +147,7 @@ button:active{transform:translateY(1px);opacity:.86}
 
     <div id="timeBar"></div>
     <div id="overall"></div>
+    <div id="needsBar" class="needsBar" aria-label="Потреби героя"></div>
     <div id="statebar" class="statebar"></div>
     <div id="stage" class="stage"></div>
     <div id="story" class="story"></div>
@@ -206,7 +209,7 @@ const SLOT_KEYS=['gamnyana_rybalka_manual_1','gamnyana_rybalka_manual_2','gamnya
 
 const stateDefs={
   hangover:{name:'ЖОСТКИЙ БУДУНЯРА',blurb:'Бувало і краще.',effects:['+2 Похуїзм','-2 Уважність','-1 Спритність','Вода падає швидше'],mods:{strength:0,attention:-2,agility:-1,pofigism:2,charisma:0,ahui:0},remove:'випити води, поїсти, поспати.',portrait:'portrait_base',severity:2},
-  pigeonHumiliated:{name:'СРАНИЙ ГОЛУБ ВАС ПРИНИЗИВ',blurb:'Вас обісрав голуб. От і все.',effects:['+1 Похуїзм','-1 Харизма'],mods:{strength:0,attention:0,agility:0,pofigism:1,charisma:-1,ahui:0},remove:'відмити куртку або нормально помитись, бажано не в калюжі.',portrait:'portrait_angry',severity:.5},
+  pigeonHumiliated:{name:'СРАНИЙ ГОЛУБ ВАС ПРИНИЗИВ',blurb:'Вас обісрав голуб. От і все.',effects:['+1 Похуїзм','-1 Харизма'],mods:{strength:0,attention:0,agility:0,pofigism:1,charisma:-1,ahui:0},remove:'переодягнутись, відмити куртку або нормально помитись, бажано не в калюжі.',portrait:'portrait_angry',severity:.5},
   yebatorium:{name:'ОСТАНОВОЧКА ЄБАТОРІУМ',blurb:'Ви не готові це коментувати.',effects:['+1 Ахуй','+1 Уважність','+1 Похуїзм'],mods:{strength:0,attention:1,agility:0,pofigism:1,charisma:0,ahui:1},remove:'сам пройде, коли перестанете ахуєвати.',note:'Ми самі в шоці, але тут реально без дебафів.',secret:'Будьте на чєку – цей стан може відкрити секретні дії.',portrait:'portrait_ahui',severity:0},
   hungry:{name:'ГОЛОДНИЙ',blurb:'Їжа зараз була б дуже кстаті.',effects:['-1 Уважність'],mods:{strength:0,attention:-1,agility:0,pofigism:0,charisma:0,ahui:0},remove:'поїсти.',portrait:'portrait_tired',severity:1},
   thirsty:{name:'СУШНЯК',blurb:'Пити хочеться пиздець.',effects:['-1 Уважність'],mods:{strength:0,attention:-1,agility:0,pofigism:0,charisma:0,ahui:0},remove:'випити води.',portrait:'portrait_worry',severity:1.5},
@@ -317,6 +320,12 @@ function migrateSave(x){
   if(!Object.prototype.hasOwnProperty.call(x||{},'metPigeon')){
     g.metPigeon=g.node!=='intro'||(Array.isArray(g.activeStates)&&g.activeStates.includes('pigeonHumiliated'))||g.knowsName||g.companion;
   }
+  if(g.flags.localClothes)g.activeStates=g.activeStates.filter(id=>id!=='pigeonHumiliated');
+  if(!g.flags.villageSceneMerged && ['galinaQuiet','galinaGrimace','galinaMurder'].includes(g.node)){
+    g.node='galinaQuiet';
+    delete g.flags._entered_galinaQuiet;
+  }
+  g.flags.villageSceneMerged=true;
   return g;
 }
 
@@ -361,9 +370,20 @@ function overallStatus(){
   if(score<7)return ['НА СОПЛЯХ','Треба шось робити.','portrait_tired'];
   return ['ТОБІ ПИЗДА','Треба терміново шось міняти.','portrait_tired'];
 }
+function overallExplanation(){
+  const causes=G.activeStates.filter(id=>(stateDefs[id]?.severity||0)>0).map(id=>stateDefs[id].name.toLowerCase());
+  if(G.health<100)causes.unshift('здоровʼя '+Math.round(G.health)+'%');
+  const values=[G.health,G.needs.hunger,G.needs.thirst,G.needs.fatigue];
+  const urgency=values.some(v=>v<=5)?'Є критичний показник – 5% або менше.':G.health<=20?'Здоровʼя на 20% або нижче – його треба терміново відновити.':values.some(v=>v<=20)?'Є потреба на 20% або нижче – сильні штрафи до характеристик.':G.health<=40?'Здоровʼя на 40% або нижче – його треба відновити.':values.some(v=>v<=40)?'Є потреба на 40% або нижче – її треба відновити.':'Зараз критичних показників немає.';
+  return (causes.length?'Стан псують: '+causes.join(', ')+'. ':'')+urgency;
+}
+function needRows(){return [['Здоровʼя',G.health,'health'],['Ситість',G.needs.hunger,'hunger'],['Вода',G.needs.thirst,'thirst'],['Бадьорість',G.needs.fatigue,'fatigue']];}
+function renderNeedsBar(){
+  $('needsBar').innerHTML=needRows().map(([name,v,kind])=>'<div class="needCompact" title="'+esc(needFlavor(kind,v))+'"><div class="needrow"><span>'+name+'</span><b>'+Math.round(v)+'%</b></div><div class="bar '+needTone(v)+'"><span style="width:'+clamp(v)+'%"></span></div></div>').join('');
+}
 function renderOverall(){
   const [n,d,p]=overallStatus();
-  overall.innerHTML='<div class="statusPanel"><div class="face"><img src="'+IMG[p]+'" alt=""></div><div><div class="statusKicker">Загальний стан</div><div class="statusName">'+esc(n)+'</div><div class="statusDetail">'+esc(d)+'</div></div></div>';
+  overall.innerHTML='<div class="statusPanel"><div class="face"><img src="'+IMG[p]+'" alt=""></div><div><div class="statusKicker">Загальний стан</div><div class="statusName">'+esc(n)+'</div><div class="statusDetail">'+esc(d)+'</div><div class="statusReason">'+esc(overallExplanation())+'</div></div></div>';
 }
 
 function phaseInfo(minute){
@@ -876,36 +896,38 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
     choices:[['Переодягнутись',()=>{G.flags.localClothes=true;go('galinaChanged',5)}]]
   },
   galinaChanged:{
+    enter:()=>{G.flags.localClothes=true;removeState('pigeonHumiliated');},
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
     text:`Одяг трохи чужий і сидить так собі, але тепер ви хоча б менше вибиваєтесь.
 
 Борода, волосся й морда після будуняри нікуди не ділись.`,
-    choices:[['Далі',()=>go('galinaQuiet',5)]]
+    choices:[['Далі',()=>go('galinaQuiet',G.flags.watchGalina?15:10)]]
   },
   galinaQuiet:{
+    enter:()=>{
+      G.flags.villageSceneMerged=true;
+      G.flags.murderKnown=true;
+      G.flags.grimaceProgressHere=false;
+      if(G.flags.watchGalina && !G.flags.galinaGrimaceSeen){
+        G.flags.galinaGrimaceSeen=true;
+        G.flags.grimaceProgressHere=true;
+        gainStatProgress('attention',1);
+      }
+    },
     scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`За вікном усе ще тихо.
+    dynamicText:()=>`За вікном усе ще тихо.
 
 – А чого в селі нікого нема? – питаєте ви.
 
-Баба Галя перестає поправляти посуд.`,
-    choices:[['Далі',()=>go(G.flags.watchGalina?'galinaGrimace':'galinaMurder',5)]]
-  },
-  galinaGrimace:{
-    enter:()=>{if(!G.flags.galinaGrimaceSeen){G.flags.galinaGrimaceSeen=true;gainStatProgress('attention',1);}},
-    scene:()=>scene('bg_hut','man_local',null,{npc:'galina_grimace',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`На мить баба Галя кривиться.
+Баба Галя перестає поправляти посуд.`+(G.flags.watchGalina?`
+
+На мить баба Галя кривиться.
 
 Так швидко, що якби ви до того за нею не придивлялись, то й не помітили б.
 
-А потім знов усміхається, ніби нічого не було.`,
-    flash:'Уважність: прогрес +1',
-    choices:[['Далі',()=>go('galinaMurder',5)]]
-  },
-  galinaMurder:{
-    enter:()=>{G.flags.murderKnown=true;},
-    scene:()=>scene('bg_hut','man_local',null,{npc:'galina_base',npcClass:'hutGalina',heroClass:'hutHero',caption:'сільська хитина'}),
-    text:`– Люд по хатах сидить, – каже баба Галя. – Ніч недобра була.
+А потім знов усміхається, ніби нічого не було.`:'')+`
+
+– Люд по хатах сидить, – каже баба Галя. – Ніч недобра була.
 
 – Шо сталося?
 
@@ -918,6 +940,7 @@ ${G.knowsName?'Екакій':'Голуб'} теж нікуди не дівся.`
 – А хто?
 
 – Коли б відали, то не шепотілись би по кутках.`,
+    customAfter:()=>G.flags.grimaceProgressHere?'<div class="flash">Уважність: прогрес +1</div>':'',
     choices:[
       ['Спитати, кого вбили.',()=>go('galinaVictim',5)],
       ['Не лізти поки далі.',()=>{adjustRelation('Галина',1);go('galinaGarlic',5)}],
@@ -1001,6 +1024,7 @@ function render(){
   }
   renderTime();
   renderOverall();
+  renderNeedsBar();
   renderStates();
   n.scene();
   story.innerHTML=paras(n.dynamicText?n.dynamicText():n.text||'');
@@ -1054,30 +1078,30 @@ function statFlavorText(k,level){
 
 function needTone(v){
   v=Number(v)||0;
-  if(v>=75)return 'needgood';
-  if(v>=50)return 'needmid';
-  if(v>=25)return 'needlow';
+  if(v>40)return 'needgood';
+  if(v>20)return 'needmid';
+  if(v>5)return 'needlow';
   return 'needcrit';
 }
 function needFlavor(kind,v){
   v=Number(v)||0;
   if(kind==='health')return 'Чим більше, тим краще.';
   if(kind==='hunger'){
-    if(v>=75)return 'Шось би перекусити.';
-    if(v>=50)return 'Голодний капець.';
-    if(v>=25)return 'Їсти хочеться пиздець.';
+    if(v>40)return 'Шось би перекусити.';
+    if(v>20)return 'Голодний капець.';
+    if(v>5)return 'Їсти хочеться пиздець.';
     return 'Євпапій починає виглядати їстівним.';
   }
   if(kind==='thirst'){
-    if(v>=75)return 'Шось би випити.';
-    if(v>=50)return 'Сушить.';
-    if(v>=25)return 'Пити хочеться пиздець.';
+    if(v>40)return 'Шось би випити.';
+    if(v>20)return 'Сушить.';
+    if(v>5)return 'Пити хочеться пиздець.';
     return 'Ви вже готові пити хуй зна шо.';
   }
   if(kind==='fatigue'){
-    if(v>=75)return 'Поки нормально.';
-    if(v>=50)return 'Трохи підзаєбались.';
-    if(v>=25)return 'Спати вже хочеться.';
+    if(v>40)return 'Поки нормально.';
+    if(v>20)return 'Трохи підзаєбались.';
+    if(v>5)return 'Спати вже хочеться.';
     return 'Вирубає.';
   }
   return '';
@@ -1100,16 +1124,16 @@ function renderInventory(){
 function renderMenu(tab='states'){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   if(tab==='states'){
-    menuContent.innerHTML='<div class="card small">Тут зберігаються активні й уже відкриті стани героя. Нові можливості в діалогах гра не завжди показує прямо – будьте на чєку.</div>'+G.knownStates.map(id=>{const d=stateDefs[id];if(!d)return '';return '<div class="card"><h3>'+esc(d.name)+'</h3>'+(d.blurb?'<div class="small" style="margin-bottom:7px">'+esc(d.blurb)+'</div>':'')+'<div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>Як позбутись:</b> '+esc(d.remove)+(d.secret?'<br><b>Секретні можливості:</b> '+esc(d.secret):'')+'</div></div>';}).join('');return;
+    menuContent.innerHTML='<div class="card small">Тут зберігаються активні й уже відкриті стани героя. Нові можливості в діалогах гра не завжди показує прямо – будьте на чєку.</div>'+G.knownStates.map(id=>{const d=stateDefs[id];if(!d)return '';return '<div class="card"><h3>'+esc(d.name)+'</h3><div class="small">'+(G.activeStates.includes(id)?'Зараз діє':'Вже знято')+'</div>'+(d.blurb?'<div class="small" style="margin-bottom:7px">'+esc(d.blurb)+'</div>':'')+'<div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>Як позбутись:</b> '+esc(d.remove)+(d.secret?'<br><b>Секретні можливості:</b> '+esc(d.secret):'')+'</div></div>';}).join('');return;
   }
   if(tab==='stats'){
-    menuContent.innerHTML='<div class="card small">Кожна характеристика має рівень. Щоб підвищити його, треба набрати 10 пунктів прогресу. Їх можна отримати за вчинки, відносини з персонажами, випадкові події та секретні дії. Бафи й дебафи тимчасово додають або забирають пункти, але постійний прогрес не змінюють. Нижче 0 характеристика не падає. Характеристики можуть відкривати нові дії та дєрзкі репліки в діалогах.</div>'+Object.entries(statDefs).map(([k,[name,desc]])=>{const x=statInfo(k),id='stat-'+k+'-desc';return '<div class="card"><div class="statCardTop"><div><b>'+esc(name)+'</b> <button class="infoBtn" type="button" data-info="'+id+'">ⓘ</button><div class="statLvl">Рівень '+x.level+'</div></div><div class="statNum">'+x.effective+'/10</div></div>'+statSegments(k)+'<div class="evpDesc" id="'+id+'">'+esc(desc)+'</div><div class="statFlavor">'+esc(statFlavorText(k,x.level))+'</div></div>';}).join('');
+    menuContent.innerHTML='<div class="card small">Кожна характеристика має рівень. Щоб підвищити його, треба набрати 10 пунктів прогресу. Їх можна отримати за вчинки, відносини з персонажами, випадкові події та секретні дії. Бафи й дебафи тимчасово додають або забирають пункти, але постійний прогрес не змінюють. Число «Зараз» враховує тимчасові зміни й обмежене від 0 до 10. Світлі сегменти – постійний прогрес, зелені – тимчасовий бонус, червоні – втрачений через штраф прогрес. Характеристики можуть відкривати нові дії та дєрзкі репліки в діалогах.</div>'+Object.entries(statDefs).map(([k,[name,desc]])=>{const x=statInfo(k),id='stat-'+k+'-desc';return '<div class="card"><div class="statCardTop"><div><b>'+esc(name)+'</b> <button class="infoBtn" type="button" data-info="'+id+'">ⓘ</button><div class="statLvl">Рівень '+x.level+'</div></div><div class="statNum">Зараз '+x.effective+'/10</div></div>'+statSegments(k)+'<div class="statBreakdown">Прогрес до наступного рівня: '+x.base+'/10<br>Тимчасова зміна: <span class="'+(x.mod>0?'plus':x.mod<0?'minus':'')+'">'+(x.mod>0?'+':'')+x.mod+'</span><br>Зараз: '+x.base+' '+(x.mod<0?'− '+Math.abs(x.mod):'+ '+x.mod)+' = '+x.effective+'/10'+(x.base+x.mod<0?' (мінімум 0)':x.base+x.mod>10?' (максимум 10)':'')+'</div><div class="evpDesc" id="'+id+'">'+esc(desc)+'</div><div class="statFlavor">'+esc(statFlavorText(k,x.level))+'</div></div>';}).join('');
     menuContent.querySelectorAll('.infoBtn').forEach(btn=>btn.onclick=()=>{const el=document.getElementById(btn.dataset.info);if(el)el.classList.toggle('open');});
     return;
   }
   if(tab==='needs'){
-    const rows=[['Здоровʼя',G.health,'health'],['Ситість',G.needs.hunger,'hunger'],['Вода',G.needs.thirst,'thirst'],['Бадьорість',G.needs.fatigue,'fatigue']];
-    menuContent.innerHTML='<div class="card small">Чим більше відсотків, тим краще. Плюс – добре. Мінус – хуйово. На 40% і нижче вже починаються стани, на 20% – сильні дебафи, 5% і нижче – критично.</div>'+rows.map(r=>{const cls=r[2]==='health'?'healthbar':needTone(r[1]);return '<div class="card"><div class="needrow"><b>'+r[0]+'</b><b>'+Math.round(r[1])+'%</b></div><div class="bar '+cls+'"><span style="width:'+r[1]+'%"></span></div><div class="statFlavor">'+esc(needFlavor(r[2],r[1]))+'</div></div>';}).join('');return;
+    const rows=needRows();
+    menuContent.innerHTML='<div class="card small">Чим більше відсотків, тим краще. Плюс – добре. Мінус – хуйово. На 40% і нижче вже починаються стани, на 20% – сильні дебафи, 5% і нижче – критично.</div>'+rows.map(r=>{const cls=needTone(r[1]);return '<div class="card"><div class="needrow"><b>'+r[0]+'</b><b>'+Math.round(r[1])+'%</b></div><div class="bar '+cls+'"><span style="width:'+r[1]+'%"></span></div><div class="statFlavor">'+esc(needFlavor(r[2],r[1]))+'</div></div>';}).join('');return;
   }
   if(tab==='inventory'){renderInventory();return;}
   if(tab==='evpapiy'){
