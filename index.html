@@ -272,6 +272,17 @@ function load(){
     G.evpapiyStats=Object.assign(fresh().evpapiyStats,x.evpapiyStats||{});
     G.done=Object.assign(fresh().done,x.done||{});
     G.flags=Object.assign({},x.flags||{});
+
+    // Сумісність зі старими сейвами: раніше поля metPigeon ще не було.
+    // Якщо гравець уже дійшов до голуба, не ховаємо вкладку Євпапія.
+    if(!Object.prototype.hasOwnProperty.call(x,'metPigeon')){
+      G.metPigeon =
+        G.node !== 'intro' ||
+        (Array.isArray(G.activeStates) && G.activeStates.includes('pigeonHumiliated')) ||
+        G.knowsName ||
+        G.companion;
+    }
+
     return true;
   }catch(e){return false;}
 }
