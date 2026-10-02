@@ -196,7 +196,7 @@ button:active{transform:translateY(1px);opacity:.86}
     <button id="newGame" class="primary">Почати</button>
     <button id="continueGame" class="secondary hidden" style="margin-top:9px">Продовжити</button>
     <div class="noteSmall">Є автозбереження і 3 ручні слоти.</div>
-    <div class="noteSmall">версія 0.30</div>
+    <div class="noteSmall">версія 0.31</div>
   </main>
 
   <main id="game" class="screen hidden">
@@ -1966,7 +1966,15 @@ function renderMap(){
 function renderMenu(tab='states'){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   if(tab==='states'){
-    menuContent.innerHTML='<div class="card small">Тут зберігаються активні й уже відкриті стани героя. Нові можливості в діалогах гра не завжди показує прямо – будьте на чєку.</div>'+G.knownStates.map(id=>{const d=stateDefs[id];if(!d)return '';return '<div class="card"><h3>'+esc(d.name)+'</h3><div class="small">'+(G.activeStates.includes(id)?'Зараз діє':'Вже знято')+'</div>'+(d.blurb?'<div class="small" style="margin-bottom:7px">'+esc(d.blurb)+'</div>':'')+'<div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>як позбутись:</b> '+esc(d.remove)+(d.secret?'<br><b>ефект:</b> '+esc(d.secret):'')+'</div></div>';}).join('');return;
+    const allStates=Object.keys(stateDefs);
+    const known=new Set(G.knownStates||[]);
+    const opened=allStates.filter(id=>known.has(id)).length;
+    menuContent.innerHTML='<div class="card small"><b>Довідник станів</b><br>Відкрито: '+opened+' / '+allStates.length+'. Стани, яких ви ще не отримували, лишаються прихованими.</div>'+allStates.map(id=>{
+      const d=stateDefs[id];
+      if(!known.has(id))return '<div class="card locked"><h3>???</h3><div class="small">Ще не відкрито.</div></div>';
+      return '<div class="card"><h3>'+esc(d.name)+'</h3>'+(d.blurb?'<div class="small" style="margin-bottom:7px">'+esc(d.blurb)+'</div>':'')+'<div>'+effectsHtml(d)+'</div><div class="small" style="margin-top:7px"><b>як позбутись:</b> '+esc(d.remove)+(d.secret?'<br><b>ефект:</b> '+esc(d.secret):'')+'</div></div>';
+    }).join('');
+    return;
   }
   if(tab==='stats'){
     menuContent.innerHTML='<div class="card small">Кожна характеристика має рівень і 10 поділок прогресу. Заповнили всі 10 – отримуєте новий рівень. Зелені поділки – тимчасовий плюс, червоні – тимчасовий мінус.</div>'+Object.entries(statDefs).map(([k,[name,desc]])=>{const x=statInfo(k),id='stat-'+k+'-desc';return '<div class="card"><div class="statCardTop"><div><b>'+esc(name)+'</b> <button class="infoBtn" type="button" data-info="'+id+'">ⓘ</button><div class="statLvl">Рівень '+x.level+' · прогрес '+x.base+'/10</div></div></div>'+statSegments(k)+'<div class="evpDesc" id="'+id+'">'+esc(desc)+'</div><div class="statFlavor">'+esc(statFlavorText(k,x.level))+'</div></div>';}).join('');
